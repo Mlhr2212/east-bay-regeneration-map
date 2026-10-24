@@ -42,6 +42,25 @@ module.exports = {
         },
         'custom-peach': '#F9E2D1',
         'dark-orange': '#C2410C', // Dark orange for primary buttons
+        // Regeneration Map design tokens (brief §8) — namespaced to avoid
+        // clashing with the existing app palette. Warm/organic community atlas.
+        regen: {
+          paper: '#FAF7F0',
+          surface: '#FFFFFF',
+          ink: '#1C2A21',
+          'ink-soft': '#4A5A50',
+          muted: '#6B7A6F',
+          line: '#E5DDD0',
+          moss: '#2D5A3D',
+          'moss-dark': '#22462F',
+          sage: '#8AA899',
+          'sage-dark': '#5A7A68',
+          clay: '#C96F4A',
+          'clay-dark': '#B25A38',
+          success: '#2D7D4F',
+          warning: '#B7791F',
+          danger: '#B42318',
+        },
         // Add more custom colors here as needed
       },
       fontFamily: {
@@ -51,6 +70,10 @@ module.exports = {
         'righteous': ['Righteous'],
         'lato': ['Lato'],
         'raleway': ['Raleway'],
+        // Regeneration Map type (brief §8): Fraunces display, Inter body.
+        // Loaded via <link> in index.html; falls back to system stacks.
+        'fraunces': ['Fraunces', 'Georgia', 'serif'],
+        'inter': ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       }
     },
    },

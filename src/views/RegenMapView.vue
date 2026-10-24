@@ -213,6 +213,8 @@ import { useResourcesStore, useAlertStore } from '@/stores';
 import RegenMap from '@/components/regen/RegenMap.vue';
 import ResourceCard from '@/components/regen/ResourceCard.vue';
 import NewsletterSignup from '@/components/regen/NewsletterSignup.vue';
+import { useTitle } from '@vueuse/core';
+import { setMetaDescription } from '@/helpers/seo';
 import {
   TYPE_FAMILIES, PARTICIPATE, SCENARIOS, SCENARIO_DISCLAIMER,
 } from '@/_config/RegenConfig';
@@ -320,6 +322,8 @@ function goToDetail(resource) {
   router.push(`/regeneration/${resource.slug}`);
 }
 
+useTitle('East Bay Regeneration Map — find a way to help near you');
+setMetaDescription('A community-kept map of regeneration projects across the East Bay: community gardens, seed and tool libraries, fridges, pantries, mutual-aid, and resilience hubs. See who each place serves, whether it is active, and how to get involved.');
 onMounted(() => {
   if (!store.resources.length) store.fetchAll();
 });

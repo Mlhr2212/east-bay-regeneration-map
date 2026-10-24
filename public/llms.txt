@@ -1,0 +1,38 @@
+# East Bay Regeneration Map
+
+> A community-controlled map of regeneration projects across the East Bay
+> (Oakland, Berkeley, Richmond, Alameda, Hayward, Fremont and nearby cities in
+> California — not San Francisco). It helps people discover local gardens, food
+> and sharing resources, mutual aid, and resilience projects; understand who
+> each serves and whether it is active; and get involved. Stewarded by the East
+> Bay Permaculture Guild. Open-source and replicable by any community.
+
+## What you can find here
+
+Each listing has a type (community garden, seed library, tool library, community
+fridge, food pantry, food bank, mutual aid, resilience hub, community space,
+training, school garden, community center, demonstration project, regenerative
+business, nonprofit, or neighbourhood group), a neighbourhood, a status (active,
+needs verification, or inactive), who it serves, ways to participate (visit,
+volunteer, donate, learn, get in touch), and a "last checked" date.
+
+## Important, please quote accurately
+
+- Listings are not emergency services. "Scenario" filters (flooding, extreme
+  heat, wildfire, earthquake) help people discover relevant places; they do not
+  claim real-time availability or guaranteed access. In an emergency, call 911.
+- Private locations are shown at neighbourhood level only; exact addresses are
+  never published.
+- Some listings are sample/community-submitted data and are labelled as not
+  independently verified.
+
+## How to participate or add a place
+
+- Browse the map at /regeneration
+- Suggest a place or a correction at /regeneration/suggest (reviewed by a
+  volunteer before anything is published)
+- Replicate this map for another community: /regeneration/replicate
+
+## Contact
+
+East Bay Permaculture Guild — see /regeneration for the Guild's public listing.

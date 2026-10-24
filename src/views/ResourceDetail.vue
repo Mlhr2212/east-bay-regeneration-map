@@ -132,9 +132,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTitle } from '@vueuse/core';
+import { setMetaDescription, setJsonLd, clearJsonLd, listingJsonLd } from '@/helpers/seo';
 import { useResourcesStore } from '@/stores';
 import StatusBadge from '@/components/regen/StatusBadge.vue';
 import StaticPinMap from '@/components/StaticPinMap.vue';
@@ -168,12 +169,17 @@ const lastChecked = computed(() => {
 
 const title = useTitle();
 watch(resource, (r) => {
-  title.value = r
-    ? `${r.name} — East Bay Regeneration Map`
-    : 'Listing — East Bay Regeneration Map';
+  if (r) {
+    title.value = `${r.name} — East Bay Regeneration Map`;
+    setMetaDescription(`${r.name} in ${r.neighbourhood || r.city || 'the East Bay'}: ${r.shortDescription || r.description || ''}`.trim());
+    setJsonLd('ld-listing', listingJsonLd(r, window.location.href));
+  } else {
+    title.value = 'Listing — East Bay Regeneration Map';
+  }
 }, { immediate: true });
 
 onMounted(() => {
   if (!store.resources.length) store.fetchAll();
 });
+onUnmounted(() => clearJsonLd('ld-listing'));
 </script>

@@ -182,3 +182,109 @@ For questions, feedback, or support, please contact:
 - Built with Vue 3 and the Vue ecosystem
 - Partnered with the Oakland Urban Farming Project (OUFP)
 - Community-driven development
+
+---
+
+# East Bay Regeneration Map
+
+A community-controlled map and relationship commons built on top of this Garden
+Steward frontend for **Hack for Social Impact 2026** (Community Resilience
+track), with the **East Bay Permaculture Guild**. It helps people discover local
+regeneration projects — gardens, seed/tool libraries, community fridges,
+pantries, mutual-aid, resilience hubs, community spaces, trainings — understand
+who each serves and whether it's active, and get involved; and it gives Guild
+volunteers a lightweight way to keep the map current so it doesn't rot into
+abandoned pins.
+
+Live at **`/regeneration`** (linked from the top nav as **Map**).
+
+## What's included (the flows)
+
+| Route | What it does |
+|-------|--------------|
+| `/regeneration` | Discover: split map + list, search, family/neighbourhood/participation/scenario filters, "near me", live count, legend |
+| `/regeneration/:slug` | Listing detail: trust block (source, verification, last-checked), participation, scenario disclaimer, neighbourhood pin, claim/manage |
+| `/regeneration/suggest` | Suggest / correct / report — goes to a moderation queue, never public immediately; blocks private addresses/phones |
+| `/regeneration/moderate` | Volunteer queue: approve / edit & approve / reject, re-crawl candidate review, 90-day stale view, activity log |
+| `/regeneration/:slug/manage` | Steward demo-claim then manage hours/description/status |
+| `/regeneration/replicate` | Fork → edit `resources.json` → deploy (see `docs/REPLICATION.md`) |
+| `/regeneration/newsletter` | Volunteer compose / preview / send (demo mode) / history; public opt-in signup on the map and listings |
+
+## Run it locally
+
+**Frontend (this repo, `garden-vue-hack`)** — Node 22:
+
+```bash
+npm install          # download dependencies
+npm run dev          # http://localhost:3030
+npm run build        # prebuild regenerates public/sitemap.xml, then vite build
+```
+
+With no backend, the map uses the bundled `src/data/resources.json` fallback, so
+every flow is demoable offline.
+
+**Backend (optional, `steward-bank-hack`)** — Strapi, separate repo:
+
+```bash
+npm install          # download dependencies (different step from seeding)
+npm run seed         # populate the database, incl. the map listings
+npm run develop      # http://localhost:1337, admin at /admin
+```
+
+Point the frontend at it with `VITE_API_URL=http://localhost:1337` (see
+`.env.example`). The map then loads live from `GET /api/projects/map`, a
+privacy-safe feed that coarsens private-location coordinates server-side.
+
+## Deploy
+
+- **Vercel (primary):** Framework **Vite**, build `npm run build`, output `dist`,
+  install `npm install`, Node **22**. `vercel.json` rewrites all routes to
+  `index.html` so deep links refresh without a 404. Set `VITE_API_URL` **before**
+  building (Vite inlines env at build time), or leave it unset for the JSON
+  fallback. Do **not** run `npm run deploy` on Vercel — that's `vite build &&
+  firebase deploy`.
+- **Netlify:** `npm run build`, drop `dist/`, add a `/* /index.html 200`
+  redirect.
+- **Firebase Hosting:** existing config + GitHub Actions workflow kept as a
+  secondary option.
+
+## Why not Lovable (tradeoffs)
+
+A no-code builder like Lovable would be easier for a non-technical editor to
+restyle, but it trades away the three things this project most needs: **free
+replication** (the builder is proprietary), **no ongoing cost**, and **full data
+control**. This build instead extends an existing open Vue app with its data in
+a plain GitHub file, so any community can fork, edit, and host it themselves.
+
+## Known limitations (honest)
+
+- **Moderation is a local demo.** Approvals update the in-app dataset and the
+  queue; in production an approval becomes a GitHub pull request / a Strapi
+  `review_status` change. Not yet a live PR workflow.
+- **Claiming is a demo claim** — no real identity verification ships this
+  weekend. The UI says so.
+- **Newsletter send is Demo mode** — no email provider is wired client-side, so
+  "Send" records the send and exports the HTML for manual sending; it never
+  emails anyone. Wiring the backend's Resend integration would make it real.
+  Only opted-in subscribers are ever counted; emails are never shown publicly.
+- **SEO metadata is client-rendered**, not server-prerendered: per-page titles,
+  descriptions, and JSON-LD are populated by JS. `sitemap.xml`, `robots.txt`,
+  `llms.txt`, and the crawlable listing routes exist; full prerendering is a
+  follow-up.
+
+## 2-minute demo script
+
+1. **Maya (newcomer)** opens `/regeneration`, filters to _Share_ → finds a seed
+   library near her neighbourhood in under a minute.
+2. She switches on the **extreme-heat** scenario — relevant places show, with the
+   "not an emergency service" disclaimer visible.
+3. **Sam (fridge steward)** opens a listing, claims it (demo), updates hours and
+   marks it inactive — under a minute, no developer.
+4. **Jo (volunteer)** opens `/regeneration/moderate`, approves a community
+   suggestion (old→new diff), and reviews an unverified re-crawl candidate.
+5. **Newsletter:** a visitor signs up; Jo composes a newsletter featuring two map
+   listings, previews it, and sends it — send mode stated honestly (Demo).
+6. **Close:** "Anyone can replicate this — fork it on GitHub, edit the data,
+   deploy. No developer required to keep it alive. Before this map, finding a way
+   to help meant knowing someone who already knew. Now it means opening one map —
+   and the community keeps it current."

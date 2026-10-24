@@ -141,7 +141,7 @@ import StatusBadge from '@/components/regen/StatusBadge.vue';
 import StaticPinMap from '@/components/StaticPinMap.vue';
 import NewsletterSignup from '@/components/regen/NewsletterSignup.vue';
 import {
-  typeLabel as labelFor, typeColor, statusMeta, sourceMeta,
+  typeLabel as labelFor, typeColor, sourceMeta,
   PARTICIPATE, SCENARIOS, SCENARIO_DISCLAIMER, daysSince, STALE_DAYS,
 } from '@/_config/RegenConfig';
 

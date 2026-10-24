@@ -122,6 +122,10 @@
             </div>
           </aside>
         </div>
+
+        <div class="mt-8 border-t border-regen-line pt-6">
+          <NewsletterSignup heading="Get updates on places like this" />
+        </div>
       </article>
     </div>
   </div>
@@ -134,6 +138,7 @@ import { useTitle } from '@vueuse/core';
 import { useResourcesStore } from '@/stores';
 import StatusBadge from '@/components/regen/StatusBadge.vue';
 import StaticPinMap from '@/components/StaticPinMap.vue';
+import NewsletterSignup from '@/components/regen/NewsletterSignup.vue';
 import {
   typeLabel as labelFor, typeColor, statusMeta, sourceMeta,
   PARTICIPATE, SCENARIOS, SCENARIO_DISCLAIMER, daysSince, STALE_DAYS,

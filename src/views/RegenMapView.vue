@@ -191,6 +191,17 @@
           </div>
         </section>
       </div>
+
+      <!-- Footer: newsletter signup + community links -->
+      <footer class="mt-10 grid gap-6 border-t border-regen-line pt-8 md:grid-cols-[1fr_auto]">
+        <NewsletterSignup heading="Keep up with East Bay regeneration" />
+        <nav class="flex flex-col gap-2 font-inter text-sm md:items-end">
+          <RouterLink to="/regeneration/suggest" class="font-semibold text-regen-moss hover:underline">Suggest a place</RouterLink>
+          <RouterLink to="/regeneration/moderate" class="font-semibold text-regen-moss hover:underline">Volunteer: moderate the map</RouterLink>
+          <RouterLink to="/regeneration/newsletter" class="font-semibold text-regen-moss hover:underline">Volunteer: send a newsletter</RouterLink>
+          <RouterLink to="/regeneration/replicate" class="font-semibold text-regen-moss hover:underline">Replicate this map</RouterLink>
+        </nav>
+      </footer>
     </div>
   </div>
 </template>
@@ -201,6 +212,7 @@ import { useRouter } from 'vue-router';
 import { useResourcesStore, useAlertStore } from '@/stores';
 import RegenMap from '@/components/regen/RegenMap.vue';
 import ResourceCard from '@/components/regen/ResourceCard.vue';
+import NewsletterSignup from '@/components/regen/NewsletterSignup.vue';
 import {
   TYPE_FAMILIES, PARTICIPATE, SCENARIOS, SCENARIO_DISCLAIMER,
 } from '@/_config/RegenConfig';

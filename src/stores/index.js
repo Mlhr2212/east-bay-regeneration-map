@@ -17,3 +17,6 @@ export * from './recurring-template.store';
 export * from './plants.store';
 export * from './project-alerts.store';
 export * from './usage.store';
+export * from './resources.store';
+export * from './proposals.store';
+export * from './newsletter.store';

@@ -107,6 +107,47 @@ export const useResourcesStore = defineStore({
         this.loading = false;
       }
     },
+    // --- Demo moderation mutations (client-side; in production an approval is a
+    // pull request / Strapi review_status change — stated honestly in the UI). ---
+
+    // Stamp a listing as checked today; clears a needs_verification flag.
+    markChecked(slug) {
+      const r = this.resources.find((x) => x.slug === slug);
+      if (!r) return;
+      r.lastChecked = new Date().toISOString().slice(0, 10);
+      if (r.status === 'needs_verification') r.status = 'active';
+    },
+    markInactive(slug) {
+      const r = this.resources.find((x) => x.slug === slug);
+      if (r) r.status = 'inactive';
+    },
+    // Reflect an approved proposal onto the public listings.
+    applyProposal(p) {
+      if (!p) return;
+      const today = new Date().toISOString().slice(0, 10);
+      if (p.kind === 'correction' && p.targetSlug) {
+        const r = this.resources.find((x) => x.slug === p.targetSlug);
+        if (!r) return;
+        const f = p.fields || {};
+        if (f.hours?.new) r.hours = f.hours.new;
+        if (f.map_status?.new) r.status = f.map_status.new;
+        r.lastChecked = today;
+      } else if (p.fields?.name) {
+        // New suggestion or approved candidate → add a minimal public listing.
+        const slug = (p.fields.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        if (this.resources.some((x) => x.slug === slug)) return;
+        this.resources.unshift({
+          id: slug, slug, name: p.fields.name, type: p.fields.type || 'neighbourhood-group',
+          family: 'gather', neighbourhood: p.fields.neighbourhood || '', city: p.fields.city || '',
+          region: 'east-bay', status: 'active', description: p.fields.serves || '', shortDescription: p.fields.serves || '',
+          serves: p.fields.serves || '', participate: p.fields.participate || [], hours: '', contactUrl: '',
+          sourceUrl: p.sourceType === 'crawl-candidate' ? p.source : '', sourceType: p.sourceType || 'community',
+          lastChecked: today, isPrivate: false, scenarioTags: [], stewardClaimed: false,
+          latitude: null, longitude: null, gardenSlug: null, heroUrl: null,
+        });
+      }
+    },
+
     // Haversine distance in km — for the "near me" sort (mirrors location-tracking.store).
     haversineDistance(lat1, lng1, lat2, lng2) {
       const R = 6371;

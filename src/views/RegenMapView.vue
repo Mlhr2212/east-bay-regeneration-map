@@ -1,0 +1,314 @@
+<template>
+  <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
+    <!-- Header: crawlable intro text (brief §9 — what it is, who for, how many, how to help) -->
+    <header class="border-b border-regen-line bg-regen-surface">
+      <div class="mx-auto max-w-[1200px] px-6 py-10">
+        <p class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">East Bay Regeneration Map</p>
+        <h1 class="mt-2 max-w-3xl font-fraunces text-[36px] font-700 leading-[1.1] text-regen-ink md:text-[48px]">
+          Find a way to help, close to home.
+        </h1>
+        <p class="mt-3 max-w-2xl font-inter text-[16px] leading-relaxed text-regen-ink-soft">
+          A community-kept map of {{ totalCount }} regeneration projects across the East Bay — community gardens,
+          seed and tool libraries, fridges, pantries, mutual-aid, and resilience hubs. See who each place serves,
+          whether it's active, and how to get involved. Anyone can
+          <RouterLink to="/regeneration/suggest" class="font-semibold text-regen-moss underline underline-offset-2">suggest a place</RouterLink>,
+          and Guild volunteers
+          <RouterLink to="/regeneration/moderate" class="font-semibold text-regen-moss underline underline-offset-2">keep it current</RouterLink>.
+        </p>
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-[1200px] px-6 py-6">
+      <!-- Search + primary controls -->
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <label class="relative flex-1">
+            <span class="sr-only">Search by name or neighbourhood</span>
+            <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-regen-muted" aria-hidden="true"></i>
+            <input
+              v-model="search"
+              type="search"
+              placeholder="Search by name or neighbourhood…"
+              class="h-12 w-full rounded-xl border border-regen-line bg-regen-surface pl-11 pr-4 font-inter text-[15px] text-regen-ink outline-none focus:border-regen-moss focus:ring-2 focus:ring-regen-moss/30"
+            />
+          </label>
+          <button
+            type="button"
+            class="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-4 font-inter text-sm font-semibold transition"
+            :class="nearMe ? 'bg-regen-moss text-white' : 'border border-regen-line bg-regen-surface text-regen-ink hover:border-regen-moss'"
+            @click="toggleNearMe"
+          >
+            <i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i>
+            {{ nearMe ? 'Sorted by distance' : 'Near me' }}
+          </button>
+        </div>
+
+        <!-- Family chips (Hick's Law: 5 groups, full list behind "More types") -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">What are you looking for?</span>
+          <button
+            v-for="fam in families"
+            :key="fam.key"
+            type="button"
+            class="inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 font-inter text-sm font-semibold transition"
+            :class="selectedFamilies.has(fam.key) ? 'text-white' : 'border border-regen-line bg-regen-surface text-regen-ink hover:border-regen-moss'"
+            :style="selectedFamilies.has(fam.key) ? { backgroundColor: fam.color } : {}"
+            :aria-pressed="selectedFamilies.has(fam.key)"
+            @click="toggleFamily(fam.key)"
+          >
+            <span class="h-2 w-2 rounded-full" :style="{ backgroundColor: selectedFamilies.has(fam.key) ? '#fff' : fam.color }" aria-hidden="true"></span>
+            {{ fam.label }}
+          </button>
+          <button
+            type="button"
+            class="inline-flex h-9 items-center gap-1.5 rounded-full border border-regen-line bg-regen-surface px-3.5 font-inter text-sm font-semibold text-regen-ink hover:border-regen-moss"
+            :aria-expanded="showAdvanced"
+            @click="showAdvanced = !showAdvanced"
+          >
+            <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+            More filters
+          </button>
+        </div>
+
+        <!-- Advanced filters (progressive disclosure) -->
+        <div v-if="showAdvanced" class="grid gap-4 rounded-2xl border border-regen-line bg-regen-surface p-4 sm:grid-cols-3">
+          <div>
+            <label class="mb-1.5 block font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Neighbourhood</label>
+            <select v-model="neighbourhood" class="h-11 w-full rounded-xl border border-regen-line bg-regen-surface px-3 font-inter text-sm text-regen-ink outline-none focus:border-regen-moss">
+              <option value="">All neighbourhoods</option>
+              <option v-for="n in store.neighbourhoods" :key="n" :value="n">{{ n }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1.5 block font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Ways to participate</label>
+            <div class="flex flex-wrap gap-1.5">
+              <button
+                v-for="(p, key) in participateOptions"
+                :key="key"
+                type="button"
+                class="inline-flex h-8 items-center gap-1.5 rounded-full px-3 font-inter text-xs font-semibold transition"
+                :class="selectedParticipate.has(key) ? 'bg-regen-moss text-white' : 'border border-regen-line text-regen-ink hover:border-regen-moss'"
+                :aria-pressed="selectedParticipate.has(key)"
+                @click="toggleSet(selectedParticipate, key)"
+              >{{ p.label }}</button>
+            </div>
+          </div>
+          <div>
+            <label class="mb-1.5 block font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Resilience scenario</label>
+            <div class="flex flex-wrap gap-1.5">
+              <button
+                v-for="(s, key) in scenarioOptions"
+                :key="key"
+                type="button"
+                class="inline-flex h-8 items-center gap-1.5 rounded-full px-3 font-inter text-xs font-semibold transition"
+                :class="selectedScenarios.has(key) ? 'bg-regen-clay text-white' : 'border border-regen-line text-regen-ink hover:border-regen-clay'"
+                :aria-pressed="selectedScenarios.has(key)"
+                @click="toggleSet(selectedScenarios, key)"
+              ><i class="fa-solid" :class="s.icon" aria-hidden="true"></i> {{ s.label }}</button>
+            </div>
+          </div>
+          <div class="sm:col-span-3">
+            <label class="inline-flex cursor-pointer items-center gap-2 font-inter text-sm text-regen-ink-soft">
+              <input type="checkbox" v-model="showInactive" class="h-4 w-4 rounded border-regen-line text-regen-moss focus:ring-regen-moss" />
+              Show inactive listings
+            </label>
+          </div>
+        </div>
+
+        <!-- Active filter chips + clear all -->
+        <div v-if="activeChips.length" class="flex flex-wrap items-center gap-2">
+          <button
+            v-for="chip in activeChips"
+            :key="chip.key"
+            type="button"
+            class="inline-flex h-8 items-center gap-2 rounded-full bg-regen-moss/10 px-3 font-inter text-xs font-semibold text-regen-moss-dark hover:bg-regen-moss/20"
+            @click="chip.clear"
+          >
+            {{ chip.label }}
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="font-inter text-xs font-semibold text-regen-muted underline underline-offset-2 hover:text-regen-ink" @click="clearAll">
+            Clear all
+          </button>
+        </div>
+
+        <!-- Scenario disclaimer (brief §1 — never an emergency-service claim) -->
+        <p v-if="selectedScenarios.size" class="rounded-xl border border-regen-clay/30 bg-regen-clay/5 px-4 py-3 font-inter text-[13px] leading-relaxed text-regen-ink-soft">
+          <i class="fa-solid fa-circle-info mr-1 text-regen-clay" aria-hidden="true"></i>{{ scenarioDisclaimer }}
+        </p>
+
+        <!-- Count + source + mobile view toggle -->
+        <div class="flex items-center justify-between gap-3">
+          <p class="font-inter text-sm font-semibold text-regen-ink" aria-live="polite">
+            {{ filtered.length }} {{ filtered.length === 1 ? 'place' : 'places' }}
+            <span v-if="store.source === 'fallback'" class="ml-2 font-normal text-regen-warning" title="Backend unreachable — showing the bundled dataset">· offline sample data</span>
+          </p>
+          <div class="flex gap-1 rounded-xl border border-regen-line bg-regen-surface p-1 lg:hidden">
+            <button type="button" class="rounded-lg px-3 py-1.5 font-inter text-sm font-semibold" :class="mobileView === 'list' ? 'bg-regen-moss text-white' : 'text-regen-ink'" @click="mobileView = 'list'">List</button>
+            <button type="button" class="rounded-lg px-3 py-1.5 font-inter text-sm font-semibold" :class="mobileView === 'map' ? 'bg-regen-moss text-white' : 'text-regen-ink'" @click="mobileView = 'map'">Map</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split: list + map -->
+      <div class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+        <!-- List -->
+        <section :class="{ 'hidden lg:block': mobileView === 'map' }" aria-label="Resource list">
+          <a href="#regen-map" class="sr-only focus:not-sr-only focus:mb-2 focus:inline-block focus:text-regen-moss">Skip to map</a>
+          <div v-if="store.loading" class="space-y-3">
+            <div v-for="i in 5" :key="i" class="h-32 animate-pulse rounded-2xl bg-regen-line/40"></div>
+          </div>
+          <div v-else-if="!filtered.length" class="rounded-2xl border border-dashed border-regen-line bg-regen-surface p-8 text-center">
+            <p class="font-fraunces text-[20px] font-600 text-regen-ink">{{ emptyState }}</p>
+            <RouterLink to="/regeneration/suggest" class="mt-3 inline-flex items-center gap-2 rounded-xl bg-regen-clay px-4 py-2.5 font-inter text-sm font-semibold text-white hover:bg-regen-clay-dark">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Suggest a place
+            </RouterLink>
+          </div>
+          <div v-else class="grid gap-3">
+            <ResourceCard
+              v-for="r in filtered"
+              :key="r.id"
+              :resource="r"
+              :selected="r.slug === selectedSlug"
+              @select="goToDetail"
+            />
+          </div>
+        </section>
+
+        <!-- Map -->
+        <section id="regen-map" :class="{ 'hidden lg:block': mobileView === 'list' }" aria-label="Map">
+          <div class="sticky top-4">
+            <div class="h-[70vh] overflow-hidden rounded-2xl border border-regen-line">
+              <RegenMap :resources="filtered" :selected-slug="selectedSlug" @select="goToDetail" />
+            </div>
+            <!-- Legend (brief §8 — colour AND text) -->
+            <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 rounded-xl border border-regen-line bg-regen-surface px-4 py-3">
+              <span class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Legend</span>
+              <span v-for="fam in families" :key="fam.key" class="inline-flex items-center gap-1.5 font-inter text-sm text-regen-ink-soft">
+                <span class="h-2.5 w-2.5 rounded-full" :style="{ backgroundColor: fam.color }" aria-hidden="true"></span>{{ fam.label }}
+              </span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useResourcesStore, useAlertStore } from '@/stores';
+import RegenMap from '@/components/regen/RegenMap.vue';
+import ResourceCard from '@/components/regen/ResourceCard.vue';
+import {
+  TYPE_FAMILIES, PARTICIPATE, SCENARIOS, SCENARIO_DISCLAIMER,
+} from '@/_config/RegenConfig';
+
+const router = useRouter();
+const store = useResourcesStore();
+const alert = useAlertStore();
+
+const families = TYPE_FAMILIES;
+const participateOptions = PARTICIPATE;
+const scenarioOptions = SCENARIOS;
+const scenarioDisclaimer = SCENARIO_DISCLAIMER;
+
+const search = ref('');
+const selectedFamilies = reactive(new Set());
+const selectedParticipate = reactive(new Set());
+const selectedScenarios = reactive(new Set());
+const neighbourhood = ref('');
+const showInactive = ref(false);
+const showAdvanced = ref(false);
+const nearMe = ref(false);
+const userLoc = ref(null);
+const mobileView = ref('list');
+const selectedSlug = ref(null);
+
+const totalCount = computed(() => store.resources.length || 21);
+
+function toggleSet(set, key) {
+  set.has(key) ? set.delete(key) : set.add(key);
+}
+function toggleFamily(key) {
+  toggleSet(selectedFamilies, key);
+}
+
+const filtered = computed(() => {
+  let list = showInactive.value ? store.resources : store.activeResources;
+  const q = search.value.trim().toLowerCase();
+  if (q) {
+    list = list.filter((r) =>
+      [r.name, r.neighbourhood, r.city].some((v) => (v || '').toLowerCase().includes(q))
+    );
+  }
+  if (selectedFamilies.size) list = list.filter((r) => selectedFamilies.has(r.family));
+  if (neighbourhood.value) list = list.filter((r) => r.neighbourhood === neighbourhood.value);
+  if (selectedParticipate.size) list = list.filter((r) => r.participate.some((p) => selectedParticipate.has(p)));
+  if (selectedScenarios.size) list = list.filter((r) => r.scenarioTags.some((s) => selectedScenarios.has(s)));
+
+  if (nearMe.value && userLoc.value) {
+    list = [...list].sort((a, b) => dist(a) - dist(b));
+  }
+  return list;
+});
+
+function dist(r) {
+  if (!userLoc.value || r.latitude == null) return Infinity;
+  return store.haversineDistance(userLoc.value.lat, userLoc.value.lng, r.latitude, r.longitude);
+}
+
+const activeChips = computed(() => {
+  const chips = [];
+  if (search.value) chips.push({ key: 'q', label: `"${search.value}"`, clear: () => (search.value = '') });
+  selectedFamilies.forEach((f) => chips.push({ key: `fam-${f}`, label: TYPE_FAMILIES.find((x) => x.key === f)?.label, clear: () => selectedFamilies.delete(f) }));
+  if (neighbourhood.value) chips.push({ key: 'nb', label: neighbourhood.value, clear: () => (neighbourhood.value = '') });
+  selectedParticipate.forEach((p) => chips.push({ key: `p-${p}`, label: PARTICIPATE[p].label, clear: () => selectedParticipate.delete(p) }));
+  selectedScenarios.forEach((s) => chips.push({ key: `s-${s}`, label: SCENARIOS[s].label, clear: () => selectedScenarios.delete(s) }));
+  if (showInactive.value) chips.push({ key: 'inactive', label: 'Incl. inactive', clear: () => (showInactive.value = false) });
+  return chips;
+});
+
+const emptyState = computed(() => {
+  const nb = neighbourhood.value ? ` in ${neighbourhood.value}` : '';
+  const fam = selectedFamilies.size ? ` ${[...selectedFamilies].map((f) => TYPE_FAMILIES.find((x) => x.key === f)?.label).join('/')}` : '';
+  return `No${fam} places${nb} match yet — know one? Suggest it below.`;
+});
+
+function clearAll() {
+  search.value = '';
+  selectedFamilies.clear();
+  selectedParticipate.clear();
+  selectedScenarios.clear();
+  neighbourhood.value = '';
+  showInactive.value = false;
+}
+
+function toggleNearMe() {
+  if (nearMe.value) {
+    nearMe.value = false;
+    return;
+  }
+  if (!navigator.geolocation) {
+    alert.error('Location is not available in this browser.');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      userLoc.value = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      nearMe.value = true;
+    },
+    () => alert.error('Could not get your location — showing all places.')
+  );
+}
+
+function goToDetail(resource) {
+  selectedSlug.value = resource.slug;
+  router.push(`/regeneration/${resource.slug}`);
+}
+
+onMounted(() => {
+  if (!store.resources.length) store.fetchAll();
+});
+</script>

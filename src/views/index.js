@@ -30,3 +30,4 @@ export { default as VerifyEmail } from './VerifyEmail.vue';
 export { default as PlantsDirectory } from './PlantsDirectory.vue';
 export { default as PlantsDetail } from './PlantsDetail.vue';
 export { default as UsageView } from './UsageView.vue';
+export { default as RegenMapView } from './RegenMapView.vue';

@@ -32,3 +32,4 @@ export { default as PlantsDetail } from './PlantsDetail.vue';
 export { default as UsageView } from './UsageView.vue';
 export { default as RegenMapView } from './RegenMapView.vue';
 export { default as ResourceDetail } from './ResourceDetail.vue';
+export { default as SuggestView } from './SuggestView.vue';

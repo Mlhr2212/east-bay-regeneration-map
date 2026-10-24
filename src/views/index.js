@@ -34,3 +34,4 @@ export { default as RegenMapView } from './RegenMapView.vue';
 export { default as ResourceDetail } from './ResourceDetail.vue';
 export { default as SuggestView } from './SuggestView.vue';
 export { default as ModerateView } from './ModerateView.vue';
+export { default as StewardManageView } from './StewardManageView.vue';

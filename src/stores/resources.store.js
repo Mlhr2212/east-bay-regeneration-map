@@ -121,6 +121,18 @@ export const useResourcesStore = defineStore({
       const r = this.resources.find((x) => x.slug === slug);
       if (r) r.status = 'inactive';
     },
+    // Steward edits (Flow 3) — patch allowed fields on a listing.
+    updateListing(slug, patch = {}) {
+      const r = this.resources.find((x) => x.slug === slug);
+      if (!r) return;
+      const allowed = ['hours', 'description', 'shortDescription', 'serves', 'status'];
+      for (const k of allowed) if (k in patch) r[k] = patch[k];
+      r.lastChecked = new Date().toISOString().slice(0, 10);
+    },
+    claimListing(slug) {
+      const r = this.resources.find((x) => x.slug === slug);
+      if (r) r.stewardClaimed = true;
+    },
     // Reflect an approved proposal onto the public listings.
     applyProposal(p) {
       if (!p) return;

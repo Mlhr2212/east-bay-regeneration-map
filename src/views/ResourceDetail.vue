@@ -116,6 +116,9 @@
               <RouterLink :to="`/regeneration/suggest?report=${resource.slug}`" class="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-inter text-sm font-semibold text-regen-muted transition hover:text-regen-danger">
                 <i class="fa-solid fa-flag" aria-hidden="true"></i> Report this listing
               </RouterLink>
+              <RouterLink :to="`/regeneration/${resource.slug}/manage`" class="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-inter text-sm font-semibold text-regen-moss transition hover:underline">
+                <i class="fa-solid fa-hand" aria-hidden="true"></i> {{ resource.stewardClaimed ? 'Manage this listing' : 'Claim this listing' }}
+              </RouterLink>
             </div>
           </aside>
         </div>

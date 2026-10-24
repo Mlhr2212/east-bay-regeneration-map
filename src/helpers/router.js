@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores';
 import { PublicHomeView, HomeView, LoginView, GardenManage, GardenPublic, GardensView, GardensPublicView, SetPassword,
     InstructionPublic, HelpView,
-    BlogList, BlogDetail, EventView, EventsList, MapView, ContributeView, PrivacyView, ProjectPublic, ProjectManage, ProjectsView, ProjectsPublicView, ProjectAlertUnsubscribe, EventTemplatesView, GardenTasksPublic, TaskDetailPublic, ManifestoView, VerifyEmail, PlantsDirectory, PlantsDetail, AboutView, UsageView, RegenMapView, ResourceDetail, SuggestView, ModerateView } from '@/views';
+    BlogList, BlogDetail, EventView, EventsList, MapView, ContributeView, PrivacyView, ProjectPublic, ProjectManage, ProjectsView, ProjectsPublicView, ProjectAlertUnsubscribe, EventTemplatesView, GardenTasksPublic, TaskDetailPublic, ManifestoView, VerifyEmail, PlantsDirectory, PlantsDetail, AboutView, UsageView, RegenMapView, ResourceDetail, SuggestView, ModerateView, StewardManageView } from '@/views';
 import { EventEditor, TaskMessages } from '@/views/admin';
 import GoogleOAuth from './oauth-google-callback/oauth-google-callback.vue'
 
@@ -72,6 +72,11 @@ export const router = createRouter({
             path: '/regeneration/moderate',
             component: ModerateView,
             name: 'regeneration-moderate'
+        },
+        {
+            path: '/regeneration/:slug/manage',
+            component: StewardManageView,
+            name: 'regeneration-manage'
         },
         {
             path: '/regeneration/:slug',

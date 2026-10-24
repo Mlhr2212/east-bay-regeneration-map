@@ -23,7 +23,63 @@
       </div>
     </header>
 
-    <div class="mx-auto max-w-[1200px] px-6 py-6">
+    <!-- Awareness layer (Phase 2A): orient a first-time visitor in ~60s, then
+         hand straight off to the map, which stays the hero. -->
+    <section class="border-b border-regen-line bg-regen-paper" aria-label="New here?">
+      <div class="mx-auto max-w-[1200px] px-6 py-8">
+        <!-- New-here invitation -->
+        <p class="max-w-2xl font-inter text-[15px] leading-relaxed text-regen-ink-soft">
+          <strong class="text-regen-ink">New here?</strong> You don't need to know anything about permaculture to start.
+          Pick one place, show up once, and see if it fits.
+        </p>
+
+        <!-- What is permaculture (plain-language intro — Guild to approve wording) -->
+        <details class="mt-4 max-w-2xl rounded-xl border border-regen-line bg-regen-surface px-4 py-3">
+          <summary class="cursor-pointer font-inter text-sm font-semibold text-regen-ink">What is permaculture, in one sentence?</summary>
+          <p class="mt-2 font-inter text-[15px] leading-relaxed text-regen-ink-soft">
+            Working <em>with</em> nature rather than against it — to grow food, share resources, and build neighbourhood resilience.
+          </p>
+          <p class="mt-1 font-inter text-[12px] text-regen-muted">A plain-language introduction, not an official definition — wording to be approved by the Guild.</p>
+        </details>
+
+        <!-- Why it matters today → each links to a real filtered view -->
+        <div class="mt-6">
+          <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Why it matters today</h2>
+          <div class="mt-2 grid gap-2 sm:grid-cols-3">
+            <button type="button" class="rounded-xl border border-regen-line bg-regen-surface p-3 text-left transition hover:-translate-y-px hover:border-regen-moss" @click="focusView({ families: ['eat', 'grow'] })">
+              <span class="font-inter text-sm font-semibold text-regen-ink"><i class="fa-solid fa-carrot mr-1.5 text-regen-moss" aria-hidden="true"></i>Food access &amp; cost</span>
+              <span class="mt-0.5 block font-inter text-[13px] text-regen-ink-soft">Gardens, fridges, and pantries sharing fresh food near you.</span>
+            </button>
+            <button type="button" class="rounded-xl border border-regen-line bg-regen-surface p-3 text-left transition hover:-translate-y-px hover:border-regen-moss" @click="focusView({ scenarios: ['extreme-heat', 'flooding'] })">
+              <span class="font-inter text-sm font-semibold text-regen-ink"><i class="fa-solid fa-temperature-high mr-1.5 text-regen-clay" aria-hidden="true"></i>Heat &amp; flooding</span>
+              <span class="mt-0.5 block font-inter text-[13px] text-regen-ink-soft">Places that may help when it's dangerously hot or wet.</span>
+            </button>
+            <button type="button" class="rounded-xl border border-regen-line bg-regen-surface p-3 text-left transition hover:-translate-y-px hover:border-regen-moss" @click="focusView({ families: ['gather', 'share'] })">
+              <span class="font-inter text-sm font-semibold text-regen-ink"><i class="fa-solid fa-people-group mr-1.5 text-regen-moss" aria-hidden="true"></i>Neighbourhood &amp; mutual aid</span>
+              <span class="mt-0.5 block font-inter text-[13px] text-regen-ink-soft">Spaces, tool shares, and mutual-aid pods near you.</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Your first way in → three real first steps -->
+        <div class="mt-6">
+          <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Your first way in</h2>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-regen-moss px-4 py-2.5 font-inter text-sm font-semibold text-white transition hover:bg-regen-moss-dark" @click="focusView({ participate: ['visit'] })">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Visit a place this week
+            </button>
+            <RouterLink to="/regeneration/volunteer" class="inline-flex items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-2.5 font-inter text-sm font-semibold text-regen-ink transition hover:border-regen-moss">
+              <i class="fa-solid fa-book-open" aria-hidden="true"></i> Learn &amp; get ready
+            </RouterLink>
+            <button type="button" class="inline-flex items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-2.5 font-inter text-sm font-semibold text-regen-ink transition hover:border-regen-moss" @click="focusView({ participate: ['volunteer'] })">
+              <i class="fa-solid fa-hands-helping" aria-hidden="true"></i> Volunteer at a work party
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="regen-controls" class="mx-auto max-w-[1200px] px-6 py-6">
       <!-- Search + primary controls -->
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -213,7 +269,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useResourcesStore, useAlertStore, useProposalsStore, useNewsletterStore } from '@/stores';
 import RegenMap from '@/components/regen/RegenMap.vue';
 import ResourceCard from '@/components/regen/ResourceCard.vue';
@@ -225,6 +281,7 @@ import {
 } from '@/_config/RegenConfig';
 
 const router = useRouter();
+const route = useRoute();
 const store = useResourcesStore();
 const alert = useAlertStore();
 const proposals = useProposalsStore();
@@ -337,9 +394,30 @@ function goToDetail(resource) {
   router.push(`/regeneration/${resource.slug}`);
 }
 
+// Awareness "first step" / "why it matters" jumps (Phase 2A): set a filtered
+// view and scroll to the controls so the link is a real action, never a dead end.
+function focusView({ families = [], scenarios = [], participate = [] } = {}) {
+  clearAll();
+  families.forEach((f) => selectedFamilies.add(f));
+  participate.forEach((p) => selectedParticipate.add(p));
+  if (scenarios.length) { showAdvanced.value = true; scenarios.forEach((s) => selectedScenarios.add(s)); }
+  document.getElementById('regen-controls')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Deep-link support: /regeneration?family=eat&scenario=extreme-heat&participate=volunteer
+function applyQuery() {
+  const q = route.query;
+  const split = (v) => (Array.isArray(v) ? v : String(v).split(',')).map((s) => s.trim()).filter(Boolean);
+  if (q.q) search.value = String(q.q);
+  if (q.family) split(q.family).forEach((f) => selectedFamilies.add(f));
+  if (q.participate) split(q.participate).forEach((p) => selectedParticipate.add(p));
+  if (q.scenario) { showAdvanced.value = true; split(q.scenario).forEach((s) => selectedScenarios.add(s)); }
+}
+
 useTitle('East Bay Regeneration Map — find a way to help near you');
 setMetaDescription('A community-kept map of regeneration projects across the East Bay: community gardens, seed and tool libraries, fridges, pantries, mutual-aid, and resilience hubs. See who each place serves, whether it is active, and how to get involved.');
 onMounted(() => {
   if (!store.resources.length) store.fetchAll();
+  applyQuery();
 });
 </script>

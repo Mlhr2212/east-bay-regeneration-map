@@ -1,7 +1,7 @@
 <script setup>
 import PageHeader from '@/components/PageHeader.vue';
 import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 import { useBlogStore } from '@/stores';
 
@@ -11,12 +11,8 @@ const baseUrl = `${import.meta.env.VITE_API_URL}`;
 const { blogs } = storeToRefs(blogStore);
 const isLoading = ref(true);
 
-blogStore.fetchAll();
-
-watch(blogs, (newBlogs) => {
-  if (newBlogs.length > 0) {
-    isLoading.value = false;
-  }
+Promise.resolve(blogStore.fetchAll()).finally(() => {
+  isLoading.value = false;
 });
 
 let heroImage = function(blog) {
@@ -51,6 +47,11 @@ const formatBlogDate = (blog) => {
         <!-- Loading spinner -->
         <div v-if="isLoading" class="flex justify-center items-center">
           <span class="loader"></span>
+        </div>
+        <!-- Empty state -->
+        <div v-else-if="!blogs?.length" class="flex flex-col items-center py-12 px-6 text-center">
+          <p class="text-gray-600 dark:text-[#d0d0d0] text-lg">No stories yet — check back soon.</p>
+          <RouterLink to="/regeneration" class="mt-4 text-gray-600 dark:text-[#8aa37c] underline">Browse the regeneration map</RouterLink>
         </div>
         <!-- Blog posts -->
         <div v-else class="space-y-8">

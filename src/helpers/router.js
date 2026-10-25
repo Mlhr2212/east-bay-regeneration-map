@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores';
 import { PublicHomeView, HomeView, LoginView, GardenManage, GardenPublic, GardensView, GardensPublicView, SetPassword,
     InstructionPublic, HelpView,
-    BlogList, BlogDetail, EventView, EventsList, ContributeView, PrivacyView, ProjectPublic, ProjectManage, ProjectsView, ProjectsPublicView, ProjectAlertUnsubscribe, EventTemplatesView, GardenTasksPublic, TaskDetailPublic, ManifestoView, VerifyEmail, PlantsDirectory, PlantsDetail, AboutView, UsageView, RegenMapView, ResourceDetail, SuggestView, ModerateView, StewardManageView, ReplicateView, NewsletterView, VolunteerView, DemoHonestyView } from '@/views';
+    BlogList, BlogDetail, EventView, EventsList, ContributeView, PrivacyView, ProjectPublic, ProjectManage, ProjectsView, ProjectsPublicView, ProjectAlertUnsubscribe, EventTemplatesView, GardenTasksPublic, TaskDetailPublic, ManifestoView, VerifyEmail, PlantsDirectory, PlantsDetail, AboutView, UsageView, RegenMapView, ResourceDetail, SuggestView, ModerateView, StewardManageView, ReplicateView, NewsletterView, VolunteerView, DemoHonestyView, NotFoundView } from '@/views';
 import { EventEditor, TaskMessages } from '@/views/admin';
 import GoogleOAuth from './oauth-google-callback/oauth-google-callback.vue'
 
@@ -250,6 +250,11 @@ export const router = createRouter({
             component: TaskMessages,
             name: 'manage-garden-messages',
             meta: { requiresAuth: true }
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            component: NotFoundView,
+            name: 'not-found'
         }
     ]
 });

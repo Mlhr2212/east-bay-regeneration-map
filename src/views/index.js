@@ -39,3 +39,4 @@ export { default as ReplicateView } from './ReplicateView.vue';
 export { default as NewsletterView } from './NewsletterView.vue';
 export { default as VolunteerView } from './VolunteerView.vue';
 export { default as DemoHonestyView } from './DemoHonestyView.vue';
+export { default as NotFoundView } from './NotFoundView.vue';

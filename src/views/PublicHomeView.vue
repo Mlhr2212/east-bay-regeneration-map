@@ -16,7 +16,7 @@ const VIDEO_BASE = 'https://storage.googleapis.com/steward-public/videos/homepag
 const videoSections = ref([
   {
     id: 'welcome',
-    line: 'When we see the whole world as a garden..',
+    line: 'When we see the whole world as a garden.',
     subline: null,
     overlay: 'rgba(20, 40, 20, 0.35)',
     gradient: 'linear-gradient(180deg, rgba(10,20,15,.55) 0%, rgba(10,20,15,0) 34%, rgba(10,20,15,.45) 100%)',

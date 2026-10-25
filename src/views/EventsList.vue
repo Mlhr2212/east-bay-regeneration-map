@@ -12,7 +12,8 @@ import PageHeader from '@/components/PageHeader.vue';
 const route = useRoute();
 const router = useRouter();
 const eventStore = useEventStore();
-const { events, eventsPagination } = storeToRefs(eventStore);
+const { events, eventsPagination, eventsSource } = storeToRefs(eventStore);
+const isOffline = computed(() => eventsSource.value === 'fallback');
 
 // The public feed is small, so take it in one page and filter here.
 eventStore.fetchPublic(1, 100);
@@ -187,10 +188,16 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
         </div>
       </div>
 
+      <p v-if="isOffline" class="evl-offline" role="status">
+        <svg class="gp-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+        Live events service not connected — showing the community's bundled sample events.
+      </p>
+
       <!-- Loading -->
       <div v-if="isLoading" class="evl-list" aria-hidden="true">
-        <div v-for="n in 3" :key="n" class="evl-skeleton animate-pulse"></div>
+        <div v-for="n in 3" :key="n" class="evl-skeleton animate-pulse" aria-hidden="true"></div>
       </div>
+      <p v-if="isLoading" class="sr-only" role="status">Loading events…</p>
 
       <div v-else-if="loadFailed" class="evl-empty" role="alert">
         <p style="margin:0 0 12px">We couldn't load upcoming events right now — the live events service isn't reachable.</p>
@@ -346,6 +353,20 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
   font-weight: 700;
   opacity: 0.85; /* 0.6 dropped the active-tab count below AA contrast */
 }
+
+.evl-offline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(143, 94, 19, 0.08);
+  color: #8F5E13;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.evl-offline .gp-icon { flex: none; }
 
 .evl-chips {
   display: flex;

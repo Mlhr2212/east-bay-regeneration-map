@@ -213,6 +213,7 @@ const handleEscape = (e) => {
                 >Gardens</router-link>
                 <router-link to="/projects" class="nav-item nav-link" @click="toggleMobileMenu">Projects</router-link>
                 <router-link to="/regeneration" class="nav-item nav-link" @click="toggleMobileMenu">Map</router-link>
+                <router-link to="/regeneration/volunteer" class="nav-item nav-link" @click="toggleMobileMenu">My next step</router-link>
                 <router-link
                     to="/manage"
                     class="nav-item nav-link"
@@ -289,6 +290,7 @@ const handleEscape = (e) => {
                     >Gardens</router-link>
                     <router-link to="/projects" class="nav-item nav-link">Projects</router-link>
                     <router-link to="/regeneration" class="nav-item nav-link">Map</router-link>
+                    <router-link to="/regeneration/volunteer" class="nav-item nav-link">My next step</router-link>
                     <router-link to="/events" class="nav-item nav-link">Events</router-link>
 
                     <!-- About dropdown -->

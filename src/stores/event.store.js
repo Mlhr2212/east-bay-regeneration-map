@@ -21,6 +21,7 @@ export const useEventStore = defineStore({
         volunteerDay: {},
         event: {},
         events: {},
+        eventsSource: 'api', // 'api' | 'fallback' (bundled sample when backend is down)
         eventsPagination: {
             page: 1,
             pageSize: 15,
@@ -53,37 +54,41 @@ export const useEventStore = defineStore({
         async fetchPublic(page = 1, pageSize = 15) {
             this.events = { loading: true };
             const url = `${baseUrl}/public?pagination[page]=${page}&pagination[pageSize]=${pageSize}&populate[0]=hero_image&populate[1]=garden&populate[garden][populate][0]=hero_image&populate[garden][populate][1]=organization`;
+            const useSampleFallback = async () => {
+                // Bundled sample events so the live/offline demo is never a dead
+                // page (mirrors data/resources.json for the map). Labelled offline.
+                try {
+                    const data = (await import('@/data/events.json')).default;
+                    const arr = Array.isArray(data) ? data : [];
+                    this.events = arr;
+                    this.eventsSource = 'fallback';
+                    this.eventsPagination = { page: 1, pageSize: arr.length, pageCount: 1, total: arr.length };
+                } catch (e) {
+                    this.events = { error: true };
+                    this.eventsPagination = { page: 1, pageSize, pageCount: 0, total: 0 };
+                }
+                return this.events;
+            };
             return fetchWrapper.get(url)
                 .then(res => {
-                    // Handle Strapi pagination response format
                     if (res && res.data && res.meta?.pagination) {
                         this.events = res.data;
                         this.eventsPagination = res.meta.pagination;
-                    } else if (Array.isArray(res)) {
-                        // Fallback for non-paginated response
-                        this.events = res;
-                        this.eventsPagination = {
-                            page: 1,
-                            pageSize: res.length,
-                            pageCount: 1,
-                            total: res.length
-                        };
-                    } else {
-                        // null / forbidden / unexpected shape (backend down or 403):
-                        // a real failure → error state (shows a persistent retry UI),
-                        // distinct from a genuinely empty list (data: []).
-                        this.events = { error: true };
-                        this.eventsPagination = { page: 1, pageSize, pageCount: 0, total: 0 };
+                        this.eventsSource = 'api';
+                        return this.events;
                     }
-                    return this.events;
+                    if (Array.isArray(res)) {
+                        this.events = res;
+                        this.eventsPagination = { page: 1, pageSize: res.length, pageCount: 1, total: res.length };
+                        this.eventsSource = 'api';
+                        return this.events;
+                    }
+                    // null / forbidden (backend down or 403) → bundled sample events.
+                    return useSampleFallback();
                 })
                 .catch(err => {
-                    // Backend unreachable/forbidden → persistent error state with
-                    // retry, never an uncaught crash and never silent skeletons.
-                    console.warn('events fetchPublic failed:', err?.message || err);
-                    this.events = { error: true };
-                    this.eventsPagination = { page: 1, pageSize, pageCount: 0, total: 0 };
-                    return this.events;
+                    console.warn('events api unreachable; using bundled sample:', err?.message || err);
+                    return useSampleFallback();
                 });
         },
         async loadMoreEvents() {

@@ -187,8 +187,10 @@ onUnmounted(() => {
           :is="projectLink(p) ? 'router-link' : 'div'"
           :to="projectLink(p) || undefined"
           class="pcard-photo"
+          :class="{ 'pcard-photo--empty': !projectImage(p) }"
           :style="projectImage(p) ? { backgroundImage: `url(${projectImage(p)})` } : null"
         >
+          <i v-if="!projectImage(p)" class="fa-solid fa-seedling" aria-hidden="true"></i>
           <div class="pcard-badges">
             <span :class="getProjectStatusOverlayClasses(resolveProjectStatus(p))">
               {{ resolveProjectStatus(p) }}
@@ -394,6 +396,19 @@ html.dark .pcard-photo {
   background-position: center;
 }
 
+/* No photo: moss gradient + centred seedling instead of an empty tan box. */
+.pcard-photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #376451, #2d3e26);
+  color: rgba(247, 241, 227, 0.55);
+}
+
+.pcard-photo--empty i {
+  font-size: 1.5rem;
+}
+
 .pcard-badges {
   position: absolute;
   top: 10px;
@@ -568,7 +583,7 @@ html.dark .pcard-count {
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #8aa37c;
+  color: #c5d4b8; /* sage #8aa37c failed AA on the dark band */
 }
 
 .pcity-title {

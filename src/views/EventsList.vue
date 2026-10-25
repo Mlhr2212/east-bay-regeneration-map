@@ -4,10 +4,10 @@ import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { useEventStore } from '@/stores';
-import { getImageOrDefault } from '@/helpers/image-utils';
 import { titleWithoutDate } from '@/helpers/event-utils';
 import '@/assets/garden-public.css';
 import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -129,7 +129,7 @@ const imageOf = (e, size = 'small') => {
   const img = e?.hero_image || e?.garden?.hero_image;
   const url = img?.formats?.[size]?.url || img?.formats?.small?.url || img?.formats?.thumbnail?.url || img?.url;
   if (url && url.startsWith('/') && import.meta.env.VITE_API_URL) return `${import.meta.env.VITE_API_URL}${url}`;
-  return getImageOrDefault(url || null);
+  return url || null;
 };
 
 const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -210,7 +210,8 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
       <template v-else>
         <!-- Next up -->
         <router-link v-if="featured" :to="`/d/${featured.id}`" class="evl-feature">
-          <img :src="imageOf(featured, 'medium')" :alt="placeOf(featured)" class="evl-feature-img" />
+          <img v-if="imageOf(featured, 'medium')" :src="imageOf(featured, 'medium')" :alt="placeOf(featured)" class="evl-feature-img" />
+          <div v-else class="evl-feature-img evl-img-placeholder" aria-hidden="true"><i class="fa-solid fa-seedling"></i></div>
           <div class="evl-feature-body">
             <p class="gp-label gp-label--accent">
               Next up<template v-if="relativeDay(featured.startDatetime)"> · {{ relativeDay(featured.startDatetime) }}</template>
@@ -255,7 +256,8 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
                 </span>
                 <span v-if="plainBlurb(e)" class="evl-row-blurb">{{ plainBlurb(e) }}</span>
               </span>
-              <img :src="imageOf(e)" alt="" class="evl-row-img" loading="lazy" />
+              <img v-if="imageOf(e)" :src="imageOf(e)" alt="" class="evl-row-img" loading="lazy" />
+              <span v-else class="evl-row-img evl-img-placeholder" aria-hidden="true"><i class="fa-solid fa-seedling"></i></span>
             </router-link>
           </div>
         </section>
@@ -273,6 +275,7 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
         </button>
       </template>
     </div>
+    <CtaBand />
   </div>
 </template>
 
@@ -640,6 +643,18 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
 
 .evl-row.is-past .evl-row-img {
   filter: saturate(0.6);
+}
+
+.evl-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #376451, #2d3e26);
+  color: rgba(247, 241, 227, 0.55);
+}
+
+.evl-img-placeholder i {
+  font-size: 1.4rem;
 }
 
 .evl-row.is-canceled .evl-row-title {

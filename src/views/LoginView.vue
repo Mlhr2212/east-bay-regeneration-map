@@ -59,41 +59,45 @@ function closeRegisterModal() {
 
               <div class="flex items-center gap-3 max-w-md mx-auto my-6">
                 <span class="login-divider"></span>
-                <span class="text-sm text-gray-500 dark:text-[#8aa37c]">or</span>
+                <span class="text-sm text-gray-600 dark:text-[#8aa37c]">or</span>
                 <span class="login-divider"></span>
               </div>
 
               <h3 class="text-xl mb-3 text-gray-900 dark:text-[#f5f5f5]">Sign in with email</h3>
         <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
             <div class="form-group">
-                <label class="text-green-900 dark:text-[#c5d4b8]">Email</label>
+                <label for="login-email" class="text-green-900 dark:text-[#c5d4b8]">Email</label>
                 <Field
+                    id="login-email"
                     name="username"
-                    type="text"
+                    type="email"
+                    autocomplete="email"
                     class="form-control bg-white text-gray-900 placeholder-gray-500 border-gray-300 dark:!bg-[#344a34] dark:!border-[#3d4d36] dark:!text-[#f5f5f5] dark:placeholder-[#a3b89e] focus:dark:!border-custom-green"
                     :class="{ 'is-invalid': errors.username }"
                 />
                 <div class="invalid-feedback">{{errors.username}}</div>
             </div>            
             <div class="form-group">
-                <label class="text-green-900 dark:text-[#c5d4b8]">Password</label>
+                <label for="login-password" class="text-green-900 dark:text-[#c5d4b8]">Password</label>
                 <Field
+                    id="login-password"
                     name="password"
                     type="password"
+                    autocomplete="current-password"
                     class="form-control bg-white text-gray-900 placeholder-gray-500 border-gray-300 dark:!bg-[#344a34] dark:!border-[#3d4d36] dark:!text-[#f5f5f5] dark:placeholder-[#a3b89e] focus:dark:!border-custom-green"
                     :class="{ 'is-invalid': errors.password }"
                 />
                 <div class="invalid-feedback">{{errors.password}}</div>
             </div>            
             <div class="form-group">
-                <button class="hover:underline text-slate-50 btn btn-primary bg-custom-green hover:bg-custom-green border-white" :disabled="isSubmitting">
+                <button class="hover:underline text-slate-50 btn btn-primary bg-[#376451] hover:bg-[#2f5233] border-white" :disabled="isSubmitting">
                     <span v-show="isSubmitting" class="spinner-border spinner-border-sm mr-1"></span>
                     Login
                 </button>
             </div>
             <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0 login-api-error">{{errors.apiError}}</div>
         </Form>
-        <div><button type="button" @click="openRegisterModal" class="hover:underline text-green-700 hover:text-green-900 dark:text-[#8aa37c] dark:hover:text-[#c5d4b8] bg-none border-none cursor-pointer p-0">Register</button></div>
+        <div><button type="button" @click="openRegisterModal" class="hover:underline text-green-800 hover:text-green-950 dark:text-[#8aa37c] dark:hover:text-[#c5d4b8] bg-none border-none cursor-pointer p-0">Register</button></div>
     </div>
 
     <!-- Phone Registration Modal -->
@@ -205,7 +209,7 @@ function closeRegisterModal() {
     .login-phone-sub {
       text-align: center;
       font-size: 0.85rem;
-      color: #6b7280;
+      color: #4b5563; /* #6b7280 failed AA on cream */
       margin-top: 0.5rem;
     }
     html.dark .login-phone-sub {

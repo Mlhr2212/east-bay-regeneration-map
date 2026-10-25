@@ -312,8 +312,9 @@ function isActive(index) {
           >
             <div
               class="pcard-photo"
+              :class="{ 'pcard-photo--empty': !projectImage(p) }"
               :style="projectImage(p) ? { backgroundImage: `url(${projectImage(p)})` } : null"
-            ></div>
+            ><i v-if="!projectImage(p)" class="fa-solid fa-seedling" aria-hidden="true"></i></div>
             <div class="pcard-body">
               <h4 class="pcard-name">{{ p.title }}</h4>
               <p class="pcard-line">{{ p.short_description }}</p>
@@ -650,6 +651,19 @@ html.dark .pcard {
   background-position: center;
 }
 
+/* No photo: moss gradient + centred seedling instead of an empty tan box. */
+.pcard-photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #376451, #2d3e26);
+  color: rgba(247, 241, 227, 0.55);
+}
+
+.pcard-photo--empty i {
+  font-size: 1.5rem;
+}
+
 .pcard-body {
   padding: 13px 14px 15px;
 }
@@ -796,33 +810,33 @@ html.dark .body-text {
 }
 
 .btn-home-primary {
-  background: #8aa37c;
+  background: #376451; /* 6.8:1 with white — sage #8aa37c failed AA */
   color: #fff;
-  border: 2px solid #8aa37c;
+  border: 2px solid #376451;
 }
 
 .btn-home-primary:hover {
-  background: #6c8a6a;
-  border-color: #6c8a6a;
+  background: #2f5233;
+  border-color: #2f5233;
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 163, 124, 0.4);
+  box-shadow: 0 4px 12px rgba(55, 100, 81, 0.4);
   text-decoration: none;
 }
 
 .btn-home-secondary {
   background: transparent;
-  color: #8aa37c;
-  border: 2px solid #8aa37c;
-  -webkit-text-fill-color: #8aa37c;
+  color: #376451;
+  border: 2px solid #376451;
+  -webkit-text-fill-color: #376451;
 }
 
 .btn-home-secondary:hover {
-  background: #8aa37c;
+  background: #376451;
   color: #fff;
   -webkit-text-fill-color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 163, 124, 0.4);
+  box-shadow: 0 4px 12px rgba(55, 100, 81, 0.4);
   text-decoration: none;
 }
 
@@ -870,7 +884,7 @@ html.dark .newsletter-section {
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #8aa37c;
+  color: #c5d4b8; /* sage #8aa37c failed AA on the dark band */
   margin: 0 0 8px;
 }
 

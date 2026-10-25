@@ -1,10 +1,9 @@
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
+    <PageHeader v-if="!done" :back="{ to: '/regeneration', label: 'Back to the map' }" :eyebrow="eyebrow" :title="heading" width="680px">
+      <p>{{ intro }}</p>
+    </PageHeader>
     <div class="mx-auto max-w-[680px] px-6 py-8">
-      <RouterLink to="/regeneration" class="inline-flex items-center gap-2 font-inter text-sm font-semibold text-regen-moss hover:underline">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to the map
-      </RouterLink>
-
       <!-- Success state -->
       <div v-if="done" class="mt-8 rounded-2xl border border-regen-line bg-regen-surface p-8 text-center">
         <i class="rm-pop fa-solid fa-circle-check inline-block text-3xl text-regen-success" aria-hidden="true"></i>
@@ -19,10 +18,6 @@
       </div>
 
       <form v-else class="mt-6" @submit.prevent="onSubmit">
-        <p class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">{{ eyebrow }}</p>
-        <h1 class="mt-2 font-fraunces text-[32px] font-700 leading-[1.15] text-regen-ink">{{ heading }}</h1>
-        <p class="mt-2 font-inter text-regen-ink-soft">{{ intro }}</p>
-
         <!-- Privacy warning (brief §4) -->
         <p class="mt-4 flex items-start gap-2 rounded-xl border border-regen-warning/30 bg-regen-warning/5 px-4 py-3 font-inter text-[13px] leading-relaxed text-regen-ink-soft">
           <i class="fa-solid fa-triangle-exclamation mt-0.5 text-regen-warning" aria-hidden="true"></i>
@@ -118,6 +113,7 @@ import { ref, reactive, computed, onMounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTitle } from '@vueuse/core';
 import { useProposalsStore, useResourcesStore, useAlertStore } from '@/stores';
+import PageHeader from '@/components/PageHeader.vue';
 import { RESOURCE_TYPES, PARTICIPATE, containsPrivateData } from '@/_config/RegenConfig';
 
 const route = useRoute();

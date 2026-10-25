@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { useTitle } from '@vueuse/core';
 import { useReveal } from '@/composables/useReveal';
+import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 
 // Regeneration Map help — the product being demoed — plus the existing
 // Garden Steward SMS answers, kept but grouped.
@@ -35,15 +37,11 @@ useReveal();
 
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
-    <header class="border-b border-regen-line bg-regen-surface">
-      <div class="rm-enter mx-auto max-w-[760px] px-6 py-10">
-        <p class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">Help</p>
-        <h1 class="mt-2 font-fraunces text-[36px] font-700 leading-[1.1] text-regen-ink">Help &amp; FAQ</h1>
-        <p class="mt-3 max-w-2xl font-inter text-[16px] leading-relaxed text-regen-ink-soft">
-          How the East Bay Regeneration Map works, and how the Garden Steward SMS system behind it works. Tap any question to open it.
-        </p>
-      </div>
-    </header>
+    <PageHeader eyebrow="Help" title="Help &amp; FAQ" width="760px">
+      <p>
+        How the East Bay Regeneration Map works, and how the Garden Steward SMS system behind it works. Tap any question to open it.
+      </p>
+    </PageHeader>
 
     <div class="mx-auto max-w-[760px] px-6 py-8">
       <!-- Regeneration Map -->
@@ -93,5 +91,7 @@ useReveal();
         <RouterLink to="/regeneration/suggest" class="rm-press inline-flex h-11 items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-5 font-inter text-sm font-semibold text-regen-ink transition hover:border-regen-moss">Suggest a place</RouterLink>
       </div>
     </div>
+
+    <CtaBand />
   </div>
 </template>

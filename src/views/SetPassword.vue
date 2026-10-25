@@ -21,6 +21,6 @@ if (urlParams.has('code')) {
         <div v-else>
             <StartPasswordForm />
         </div>
-        <div><a href="login" class="hover:underline text-green-700 hover:text-green-900">Back to Login</a></div>
+        <div><a href="login" class="hover:underline text-green-800 hover:text-green-950">Back to Login</a></div>
     </div>
 </template>

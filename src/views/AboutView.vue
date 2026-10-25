@@ -1,5 +1,6 @@
 <script setup>
 import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 import EmailLink from '@/components/EmailLink.vue';
 </script>
 
@@ -43,6 +44,7 @@ import EmailLink from '@/components/EmailLink.vue';
       </div>
     </div>
 
+    <CtaBand />
   </div>
 </template>
 
@@ -92,31 +94,31 @@ import EmailLink from '@/components/EmailLink.vue';
 }
 
 .btn-about-primary {
-  background: #8aa37c;
+  background: #376451; /* 6.8:1 with white — sage #8aa37c failed AA */
   color: #fff;
-  border: 2px solid #8aa37c;
+  border: 2px solid #376451;
 }
 
 .btn-about-primary:hover {
-  background: #6c8a6a;
-  border-color: #6c8a6a;
+  background: #2f5233;
+  border-color: #2f5233;
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 163, 124, 0.4);
+  box-shadow: 0 4px 12px rgba(55, 100, 81, 0.4);
   text-decoration: none;
 }
 
 .btn-about-secondary {
   background: transparent;
-  color: #8aa37c;
-  border: 2px solid #8aa37c;
+  color: #376451;
+  border: 2px solid #376451;
 }
 
 .btn-about-secondary:hover {
-  background: #8aa37c;
+  background: #376451;
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 163, 124, 0.4);
+  box-shadow: 0 4px 12px rgba(55, 100, 81, 0.4);
   text-decoration: none;
 }
 

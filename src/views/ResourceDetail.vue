@@ -1,10 +1,12 @@
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
+    <PageHeader :back="{ to: '/regeneration', label: 'Back to the map' }" :eyebrow="resource ? typeLabel : ''" :title="resource ? resource.name : 'Listing'" width="900px">
+      <template v-if="resource" #actions>
+        <span class="inline-flex rounded-full bg-[#f7f1e3] p-0.5"><StatusBadge :status="resource.status" /></span>
+      </template>
+      <p v-if="resource"><i class="fa-solid fa-location-dot mr-1" aria-hidden="true"></i>{{ resource.neighbourhood || resource.city }}<span v-if="resource.neighbourhood && resource.city">, {{ resource.city }}</span></p>
+    </PageHeader>
     <div class="mx-auto max-w-[900px] px-6 py-6">
-      <RouterLink to="/regeneration" class="inline-flex items-center gap-2 font-inter text-sm font-semibold text-regen-moss hover:underline">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to the map
-      </RouterLink>
-
       <!-- Loading -->
       <div v-if="store.loading && !resource" class="mt-6 space-y-3">
         <div class="h-8 w-2/3 animate-pulse rounded-lg bg-regen-line/50"></div>
@@ -22,17 +24,6 @@
 
       <!-- Detail -->
       <article v-else class="mt-5">
-        <!-- Header -->
-        <div class="flex items-center gap-2">
-          <span class="h-2.5 w-2.5 rounded-full" :style="{ backgroundColor: color }" aria-hidden="true"></span>
-          <span class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">{{ typeLabel }}</span>
-          <StatusBadge :status="resource.status" class="ml-1" />
-        </div>
-        <h1 class="mt-2 font-fraunces text-[32px] font-700 leading-[1.15] text-regen-ink md:text-[40px]">{{ resource.name }}</h1>
-        <p class="mt-2 font-inter text-regen-ink-soft">
-          <i class="fa-solid fa-location-dot mr-1 text-regen-muted" aria-hidden="true"></i>{{ resource.neighbourhood || resource.city }}<span v-if="resource.neighbourhood && resource.city">, {{ resource.city }}</span>
-        </p>
-
         <!-- Private location note (brief §1) -->
         <p v-if="resource.isPrivate" class="mt-3 inline-flex items-start gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-3 font-inter text-[13px] text-regen-ink-soft">
           <i class="fa-solid fa-shield-halved mt-0.5 text-regen-moss" aria-hidden="true"></i>
@@ -151,6 +142,8 @@
         </div>
       </article>
     </div>
+
+    <CtaBand />
   </div>
 </template>
 
@@ -161,11 +154,13 @@ import { useTitle } from '@vueuse/core';
 import { setMetaDescription, setJsonLd, clearJsonLd, listingJsonLd } from '@/helpers/seo';
 import { useReveal } from '@/composables/useReveal';
 import { useResourcesStore, useEventStore } from '@/stores';
+import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 import StatusBadge from '@/components/regen/StatusBadge.vue';
 import StaticPinMap from '@/components/StaticPinMap.vue';
 import NewsletterSignup from '@/components/regen/NewsletterSignup.vue';
 import {
-  typeLabel as labelFor, typeColor, sourceMeta,
+  typeLabel as labelFor, sourceMeta,
   PARTICIPATE, SCENARIOS, SCENARIO_DISCLAIMER, daysSince, STALE_DAYS,
 } from '@/_config/RegenConfig';
 
@@ -200,7 +195,6 @@ async function loadEvents(gardenSlug) {
   }
 }
 const typeLabel = computed(() => labelFor(resource.value?.type));
-const color = computed(() => typeColor(resource.value?.type));
 const source = computed(() => sourceMeta(resource.value?.sourceType));
 const scenarioDisclaimer = SCENARIO_DISCLAIMER;
 

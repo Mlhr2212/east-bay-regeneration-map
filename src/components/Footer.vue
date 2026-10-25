@@ -7,10 +7,37 @@
       <p>
         <img 
           src="https://storage.googleapis.com/steward_upload/uploads/garden_steward_logo_green_sq_350_75514db053/garden_steward_logo_green_sq_350_75514db053.jpg" 
-          class="navbar-brand mx-auto h-40" 
+          class="navbar-brand mx-auto h-16" 
           alt="Garden Steward Logo"
         >
-        <br />
+      </p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer">
+      <div class="footer-col">
+        <h2 class="footer-heading">Explore</h2>
+        <router-link to="/regeneration" class="footer-link">Map</router-link>
+        <router-link to="/events" class="footer-link">Events</router-link>
+        <router-link to="/gardens" class="footer-link">Gardens</router-link>
+        <router-link to="/projects" class="footer-link">Projects</router-link>
+      </div>
+      <div class="footer-col">
+        <h2 class="footer-heading">Get involved</h2>
+        <router-link to="/regeneration/suggest" class="footer-link">Suggest a place</router-link>
+        <router-link to="/regeneration/volunteer" class="footer-link">My next step</router-link>
+        <router-link to="/regeneration/newsletter" class="footer-link">Newsletter</router-link>
+      </div>
+      <div class="footer-col">
+        <h2 class="footer-heading">About</h2>
+        <router-link to="/about" class="footer-link">About</router-link>
+        <router-link to="/help" class="footer-link">Help</router-link>
+        <router-link to="/privacy" class="footer-link">Privacy</router-link>
+        <router-link to="/contribute" class="footer-link">Contribute</router-link>
+      </div>
+    </nav>
+
+    <div class="text-center mt-4">
+      <p>
         <router-link
           to="/contribute"
           class="contribute-link"
@@ -19,6 +46,7 @@
           <i class="fab fa-github ml-2" aria-hidden="true"></i>
         </router-link>
       </p>
+      <p class="footer-copy">Garden Steward — open source community software.</p>
     </div>
   </footer>
 </template>
@@ -32,6 +60,48 @@
   width: 100%;
   box-sizing: border-box;
   background-color: var(--footer-sage);
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem 4rem;
+  max-width: 720px;
+  margin: 1.25rem auto 0;
+  text-align: left;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 140px;
+}
+
+.footer-heading {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1C2A21; /* AA on the sage footer: 5.49:1 */
+}
+
+.footer-link {
+  color: #1C2A21;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+.footer-copy {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  color: #1C2A21;
 }
 
 .contribute-link {
@@ -57,6 +127,19 @@
   font-size: 1.2em;
   color: inherit;
 }
+
+@media (max-width: 720px) {
+  .footer-nav {
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-col {
+    min-width: 0;
+  }
+}
 </style>
 
 <!--
@@ -73,4 +156,3 @@ html.dark .footer-container {
   background-color: #8da382;
 }
 </style>
-

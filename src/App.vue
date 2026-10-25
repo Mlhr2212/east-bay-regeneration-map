@@ -1,18 +1,23 @@
 <script setup>
+import { computed } from 'vue';
 import { Nav, Alert } from '@/components';
 import { LoginModal } from '@/components/modals';
 import { useAuthStore } from '@/stores';
 import Footer from '@/components/Footer.vue';
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import '@fortawesome/fontawesome-free/css/all.css'
 
 const auth = useAuthStore();
 // The stored user is a login-time snapshot; pick up the current role (e.g. Administrator).
 auth.refreshRole();
+
+const route = useRoute();
+// Public pages sit on the home page's cream canvas; /manage keeps its own styling.
+const isPublic = computed(() => !route.path.startsWith('/manage'));
 </script>
 
 <template>
-    <div class="app-container">
+    <div class="app-container" :class="{ 'is-public': isPublic }">
         <a href="#main-content" class="skip-link">Skip to main content</a>
         <Nav />
         <Alert />
@@ -30,6 +35,20 @@ auth.refreshRole();
 .app-container {
     position: relative;
     z-index: 1;
+}
+
+/* Cream canvas + no sage strip under the nav on public pages. */
+.app-container.is-public {
+    background: #f7f1e3;
+}
+
+.app-container.is-public > main {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.app-container.is-public > .footer-container {
+    margin-top: 0;
 }
 
 .container {

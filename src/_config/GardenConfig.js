@@ -231,7 +231,7 @@ export const projectCategoryBadges = {
   art: {
     label: 'Art',
     classes:
-      'bg-orange-400 text-white border-orange-500/70 ' +
+      'bg-orange-700 text-white border-orange-800/70 ' +
       'dark:bg-orange-700 dark:text-orange-50 dark:border-orange-600/70'
   },
   event: {
@@ -243,7 +243,7 @@ export const projectCategoryBadges = {
   education: {
     label: 'Education',
     classes:
-      'bg-teal-500 text-white border-teal-600/70 ' +
+      'bg-teal-700 text-white border-teal-800/70 ' +
       'dark:bg-teal-800 dark:text-teal-50 dark:border-teal-700/70'
   },
   planting: {
@@ -255,7 +255,7 @@ export const projectCategoryBadges = {
   community: {
     label: 'Community',
     classes:
-      'bg-sky-500 text-white border-sky-600/70 ' +
+      'bg-sky-700 text-white border-sky-800/70 ' +
       'dark:bg-sky-800 dark:text-sky-50 dark:border-sky-700/70'
   },
   default: {
@@ -447,11 +447,11 @@ const projectStatusOverlayColors = {
 
 const projectCategoryOverlayColors = {
   infrastructure: 'bg-orange-200 text-orange-900',
-  art:            'bg-orange-400 text-white',
+  art:            'bg-orange-700 text-white',
   event:          'bg-amber-300 text-amber-950',
-  education:      'bg-teal-500 text-white',
+  education:      'bg-teal-700 text-white',
   planting:       'bg-green-400 text-green-950',
-  community:      'bg-sky-500 text-white',
+  community:      'bg-sky-700 text-white',
   default:        'bg-stone-200 text-stone-800'
 };
 

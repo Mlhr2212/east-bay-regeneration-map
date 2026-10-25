@@ -1,27 +1,21 @@
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
     <!-- Header: crawlable intro text (brief §9 — what it is, who for, how many, how to help) -->
-    <header class="border-b border-regen-line bg-regen-surface">
-      <div class="rm-enter mx-auto max-w-[1200px] px-6 py-10">
-        <div class="flex items-start justify-between gap-4">
-          <p class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">East Bay Regeneration Map</p>
-          <button type="button" class="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-regen-line bg-regen-surface px-3 py-1.5 font-inter text-xs font-semibold text-regen-muted transition hover:border-regen-moss hover:text-regen-ink" title="Restore the seeded demo dataset" @click="resetDemo">
-            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset demo data
-          </button>
-        </div>
-        <h1 class="mt-2 max-w-3xl font-fraunces text-[36px] font-700 leading-[1.1] text-regen-ink md:text-[48px]">
-          Find a way to help, close to home.
-        </h1>
-        <p class="mt-3 max-w-2xl font-inter text-[16px] leading-relaxed text-regen-ink-soft">
-          A community-kept map of regeneration projects across the East Bay — community gardens,
-          seed and tool libraries, fridges, pantries, mutual-aid, and resilience hubs. See who each place serves,
-          whether it's active, and how to get involved. Anyone can
-          <RouterLink to="/regeneration/suggest" class="font-semibold text-regen-moss underline underline-offset-2">suggest a place</RouterLink>,
-          and Guild volunteers
-          <RouterLink to="/regeneration/moderate" class="font-semibold text-regen-moss underline underline-offset-2">keep it current</RouterLink>.
-        </p>
-      </div>
-    </header>
+    <PageHeader eyebrow="East Bay Regeneration Map" title="Find a way to help, close to home." width="1200px">
+      <template #actions>
+        <button type="button" class="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-[#f7f1e3]/40 px-3 py-1.5 font-inter text-xs font-semibold text-[#f7f1e3] transition hover:bg-white/10" title="Restore the seeded demo dataset" @click="resetDemo">
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset demo data
+        </button>
+      </template>
+      <p>
+        A community-kept map of regeneration projects across the East Bay — community gardens,
+        seed and tool libraries, fridges, pantries, mutual-aid, and resilience hubs. See who each place serves,
+        whether it's active, and how to get involved. Anyone can
+        <RouterLink to="/regeneration/suggest" class="font-semibold underline underline-offset-2">suggest a place</RouterLink>,
+        and Guild volunteers
+        <RouterLink to="/regeneration/moderate" class="font-semibold underline underline-offset-2">keep it current</RouterLink>.
+      </p>
+    </PageHeader>
 
     <!-- Awareness layer (Phase 2A): orient a first-time visitor in ~60s, then
          hand straight off to the map, which stays the hero. -->
@@ -277,6 +271,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useResourcesStore, useAlertStore, useProposalsStore, useNewsletterStore } from '@/stores';
+import PageHeader from '@/components/PageHeader.vue';
 import RegenMap from '@/components/regen/RegenMap.vue';
 import ResourceCard from '@/components/regen/ResourceCard.vue';
 import NewsletterSignup from '@/components/regen/NewsletterSignup.vue';

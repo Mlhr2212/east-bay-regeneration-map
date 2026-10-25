@@ -1,13 +1,8 @@
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
+    <PageHeader :back="{ to: '/regeneration', label: 'Back to the map' }" eyebrow="Guild volunteer view" title="Newsletter" width="900px" />
+
     <div class="mx-auto max-w-[900px] px-6 py-8">
-      <RouterLink to="/regeneration" class="inline-flex items-center gap-2 font-inter text-sm font-semibold text-regen-moss hover:underline">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to the map
-      </RouterLink>
-
-      <p class="mt-4 font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">Guild volunteer view</p>
-      <h1 class="mt-1 font-fraunces text-[32px] font-700 leading-[1.15] text-regen-ink">Newsletter</h1>
-
       <!-- Send mode (brief §4c — always say which mode) -->
       <p class="mt-3 flex items-start gap-2 rounded-xl border border-regen-warning/30 bg-regen-warning/5 px-4 py-3 font-inter text-[13px] leading-relaxed text-regen-ink-soft">
         <i class="fa-solid fa-circle-info mt-0.5 text-regen-warning" aria-hidden="true"></i>
@@ -125,6 +120,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useTitle } from '@vueuse/core';
 import { useNewsletterStore, useResourcesStore, useAlertStore } from '@/stores';
+import PageHeader from '@/components/PageHeader.vue';
 
 const newsletter = useNewsletterStore();
 const resources = useResourcesStore();

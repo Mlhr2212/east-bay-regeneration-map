@@ -1,5 +1,6 @@
 <script setup>
 import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 const audioUrl = 'https://storage.googleapis.com/steward_upload/uploads/manifesto_audio_391eee28a7/manifesto_audio_391eee28a7.m4a'
 
 const manifestoText = `We are life-seeking fulfillment.
@@ -125,14 +126,15 @@ We must act as nature.`
     <div class="manifesto-media mt-8 p-6 bg-[#344a34] rounded-lg text-center dark:bg-[#344a34]">
       <p class="manifesto-media-text text-xl mb-4">Does this resonate with you?</p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="/gardens" class="hover:underline text-slate-50 mt-3 btn btn-primary bg-custom-green hover:bg-custom-green border-white">
+        <a href="/gardens" class="hover:underline text-slate-50 mt-3 btn btn-primary bg-[#376451] hover:bg-[#2f5233] border-white">
           Find a Garden
         </a>
-        <a href="/contribute" class="hover:underline text-slate-50 mt-3 btn btn-secondary bg-custom-green hover:bg-custom-green border-white dark:!text-slate-50 dark:!border-white">
+        <a href="/contribute" class="hover:underline text-slate-50 mt-3 btn btn-secondary bg-[#376451] hover:bg-[#2f5233] border-white dark:!text-slate-50 dark:!border-white">
           Get Involved
         </a>
       </div>
     </div>
     </div>
   </div>
+  <CtaBand />
 </template>

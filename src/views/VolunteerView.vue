@@ -1,15 +1,10 @@
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
-    <div class="mx-auto max-w-[760px] px-6 py-8">
-      <RouterLink to="/regeneration" class="inline-flex items-center gap-2 font-inter text-sm font-semibold text-regen-moss hover:underline">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to the map
-      </RouterLink>
+    <PageHeader :back="{ to: '/regeneration', label: 'Back to the map' }" eyebrow="Learn &amp; get ready" title="My next step" width="760px">
+      <p>Come back without starting over. Here's your next work party, what to bring, and the skills you're building.</p>
+    </PageHeader>
 
-      <p class="mt-4 font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">Learn &amp; get ready</p>
-      <h1 class="mt-1 font-fraunces text-[32px] font-700 leading-[1.15] text-regen-ink">My next step</h1>
-      <p class="mt-2 font-inter text-regen-ink-soft">
-        Come back without starting over. Here's your next work party, what to bring, and the skills you're building.
-      </p>
+    <div class="mx-auto max-w-[760px] px-6 py-8">
 
       <p v-if="!auth.isLoggedIn" class="mt-3 flex items-start gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-3 font-inter text-[13px] leading-relaxed text-regen-ink-soft">
         <i class="fa-solid fa-circle-info mt-0.5 text-regen-moss" aria-hidden="true"></i>
@@ -105,6 +100,8 @@
         </div>
       </section>
     </div>
+
+    <CtaBand />
   </div>
 </template>
 
@@ -115,6 +112,8 @@ import { useTitle } from '@vueuse/core';
 import { useAuthStore, useEventStore } from '@/stores';
 import { useVolunteerStore } from '@/stores/volunteer.store';
 import { useReveal } from '@/composables/useReveal';
+import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 import {
   WORKDAY_TEMPLATE, VOLUNTEER_SKILLS, SKILL_LEVELS, CONTACT_CHANNELS, CONTACT_FREQUENCY, REVIEW_LABELS,
 } from '@/_config/RegenConfig';

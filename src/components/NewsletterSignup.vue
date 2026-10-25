@@ -81,17 +81,17 @@
   font-weight: 600;
   color: #fff;
   -webkit-text-fill-color: currentColor;
-  background: #8aa37c;
+  background: #376451; /* 6.8:1 with white — sage #8aa37c failed AA */
   border-radius: 8px;
   text-decoration: none;
   transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .subscribe-btn:hover {
-  background: #6c8a6a;
+  background: #2f5233;
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 163, 124, 0.4);
+  box-shadow: 0 4px 12px rgba(55, 100, 81, 0.4);
   text-decoration: none;
 }
 

@@ -1,15 +1,11 @@
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
-    <header class="border-b border-regen-line bg-regen-surface">
-      <div class="mx-auto max-w-[760px] px-6 py-10">
-        <p class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">Community-controlled</p>
-        <h1 class="mt-2 font-fraunces text-[36px] font-700 leading-[1.1] text-regen-ink">Replicate this map for your community</h1>
-        <p class="mt-3 font-inter text-[16px] leading-relaxed text-regen-ink-soft">
-          This map is open. No proprietary builder, no per-seat cost, no lock-in — your community owns its data.
-          Standing up a map for another region is three steps, and no code knowledge beyond fork, edit, deploy.
-        </p>
-      </div>
-    </header>
+    <PageHeader eyebrow="Community-controlled" title="Replicate this map for your community" width="760px">
+      <p>
+        This map is open. No proprietary builder, no per-seat cost, no lock-in — your community owns its data.
+        Standing up a map for another region is three steps, and no code knowledge beyond fork, edit, deploy.
+      </p>
+    </PageHeader>
 
     <div class="mx-auto max-w-[760px] px-6 py-8">
       <ol class="space-y-5">
@@ -48,11 +44,15 @@
         <code class="rounded bg-regen-line/50 px-1.5 py-0.5">REPLICATION.md</code> in the repo.
       </p>
     </div>
+
+    <CtaBand />
   </div>
 </template>
 
 <script setup>
 import { useTitle } from '@vueuse/core';
+import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 
 const repoUrl = 'https://github.com/Garden-Steward/garden-vue-hack';
 const steps = [

@@ -1,5 +1,6 @@
 <script setup>
 import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
@@ -79,6 +80,7 @@ const formatBlogDate = (blog) => {
         </div>
       </div>
     </div>
+    <CtaBand />
   </div>
 </template>
 

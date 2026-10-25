@@ -687,7 +687,7 @@ html.dark .gcard-count {
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #8aa37c;
+  color: #c5d4b8; /* sage #8aa37c failed AA on the dark band */
 }
 
 .gcity-title {

@@ -1,20 +1,15 @@
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
-    <div class="mx-auto max-w-[680px] px-6 py-8">
-      <RouterLink :to="`/regeneration/${slug}`" class="inline-flex items-center gap-2 font-inter text-sm font-semibold text-regen-moss hover:underline">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to listing
-      </RouterLink>
+    <PageHeader :back="{ to: resource ? `/regeneration/${slug}` : '/regeneration', label: resource ? 'Back to listing' : 'Back to the map' }" eyebrow="Steward view" :title="resource ? resource.name : 'Manage listing'" width="680px" />
 
+    <div class="mx-auto max-w-[680px] px-6 py-8">
       <div v-if="!resource" class="mt-10 rounded-2xl border border-dashed border-regen-line bg-regen-surface p-10 text-center">
         <p class="font-fraunces text-[22px] font-600">That listing doesn't exist.</p>
         <RouterLink to="/regeneration" class="mt-4 inline-block rounded-xl bg-regen-moss px-4 py-2.5 font-inter text-sm font-semibold text-white">Back to the map</RouterLink>
       </div>
 
       <template v-else>
-        <p class="mt-4 font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">Steward view</p>
-        <h1 class="mt-1 font-fraunces text-[30px] font-700 leading-[1.15] text-regen-ink">{{ resource.name }}</h1>
-
-        <p class="mt-3 flex items-start gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-3 font-inter text-[13px] leading-relaxed text-regen-ink-soft">
+        <p class="flex items-start gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-3 font-inter text-[13px] leading-relaxed text-regen-ink-soft">
           <i class="fa-solid fa-circle-info mt-0.5 text-regen-moss" aria-hidden="true"></i>
           Demo claim — no real identity check is done this weekend. In production, claiming verifies your role at the project. Contact details you enter are for moderation only and are never published.
         </p>
@@ -92,6 +87,7 @@ import { reactive, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTitle } from '@vueuse/core';
 import { useResourcesStore, useProposalsStore, useAlertStore } from '@/stores';
+import PageHeader from '@/components/PageHeader.vue';
 import { statusMeta } from '@/_config/RegenConfig';
 
 const route = useRoute();

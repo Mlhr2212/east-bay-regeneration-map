@@ -1,5 +1,6 @@
 <script setup>
 import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 import EmailLink from '@/components/EmailLink.vue';
 </script>
 
@@ -17,7 +18,7 @@ import EmailLink from '@/components/EmailLink.vue';
                     Garden Steward ("we," "us," or "our") is an open-source community garden management platform. This Privacy Policy explains how we collect, use, and protect your personal information when you use our service.
                 </p>
                 <p class="mb-4 dark:text-[#d0d0d0]">
-                    Garden Steward is provided under the MIT License and is available as open-source software at <a href="https://github.com/Garden-Steward" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:text-green-900 hover:underline dark:text-green-400 dark:hover:text-green-300">https://github.com/Garden-Steward</a>.
+                    Garden Steward is provided under the MIT License and is available as open-source software at <a href="https://github.com/Garden-Steward" target="_blank" rel="noopener noreferrer" class="text-green-800 hover:text-green-950 underline dark:text-green-400 dark:hover:text-green-300">https://github.com/Garden-Steward</a>.
                 </p>
             </div>
 
@@ -121,7 +122,7 @@ import EmailLink from '@/components/EmailLink.vue';
                     <li><strong>Unsubscribe</strong> from email communications</li>
                 </ul>
                 <p class="mb-4">
-                    To exercise these rights, contact us at: <EmailLink class="text-green-700 hover:text-green-900 dark:text-green-300 dark:hover:text-green-200 hover:underline" />
+                    To exercise these rights, contact us at: <EmailLink class="text-green-800 hover:text-green-950 dark:text-green-300 dark:hover:text-green-200 underline" />
                 </p>
             </div>
 
@@ -166,8 +167,8 @@ import EmailLink from '@/components/EmailLink.vue';
                 <p class="mb-2">If you have questions about this Privacy Policy or your personal information, contact:</p>
                 <p class="mb-2">
                     <strong>Garden Steward</strong><br>
-                    Email: <EmailLink class="text-green-700 hover:text-green-900 dark:text-green-300 dark:hover:text-green-200 hover:underline" /><br>
-                    GitHub: <a href="https://github.com/Garden-Steward" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:text-green-900 dark:text-green-300 dark:hover:text-green-200 hover:underline">https://github.com/Garden-Steward</a>
+                    Email: <EmailLink class="text-green-800 hover:text-green-950 dark:text-green-300 dark:hover:text-green-200 underline" /><br>
+                    GitHub: <a href="https://github.com/Garden-Steward" target="_blank" rel="noopener noreferrer" class="text-green-800 hover:text-green-950 dark:text-green-300 dark:hover:text-green-200 underline">https://github.com/Garden-Steward</a>
                 </p>
             </div>
 
@@ -188,6 +189,7 @@ import EmailLink from '@/components/EmailLink.vue';
             </div>
         </div>
     </div>
+    <CtaBand />
 </template>
 
 <style scoped>

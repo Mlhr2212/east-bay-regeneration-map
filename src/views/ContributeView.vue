@@ -1,5 +1,6 @@
 <script setup>
 import PageHeader from '@/components/PageHeader.vue';
+import CtaBand from '@/components/CtaBand.vue';
 import EmailLink from '@/components/EmailLink.vue';
 </script>
 
@@ -50,7 +51,7 @@ import EmailLink from '@/components/EmailLink.vue';
                         <a href="https://github.com/Garden-Steward/garden-vue" 
                            target="_blank" 
                            rel="noopener noreferrer"
-                           class="text-green-700 hover:text-green-900 hover:underline font-medium dark:text-white dark:hover:text-gray-200">
+                           class="text-green-800 hover:text-green-950 hover:underline font-medium dark:text-white dark:hover:text-gray-200">
                             View on GitHub →
                         </a>
                     </div>
@@ -60,7 +61,7 @@ import EmailLink from '@/components/EmailLink.vue';
                         <a href="https://github.com/Garden-Steward/steward-bank" 
                            target="_blank" 
                            rel="noopener noreferrer"
-                           class="text-green-700 hover:text-green-900 hover:underline font-medium dark:text-white dark:hover:text-gray-200">
+                           class="text-green-800 hover:text-green-950 hover:underline font-medium dark:text-white dark:hover:text-gray-200">
                             View on GitHub →
                         </a>
                     </div>
@@ -109,7 +110,7 @@ import EmailLink from '@/components/EmailLink.vue';
                     Have questions about contributing? We'd love to hear from you!
                 </p>
                 <p class="dark:text-white">
-                    Email: <EmailLink class="text-green-700 hover:text-green-900 hover:underline dark:text-white dark:hover:text-gray-200 dark:hover:underline" />
+                    Email: <EmailLink class="text-green-800 hover:text-green-950 hover:underline dark:text-white dark:hover:text-gray-200 dark:hover:underline" />
                 </p>
             </div>
 
@@ -117,18 +118,19 @@ import EmailLink from '@/components/EmailLink.vue';
                 <a href="https://github.com/Garden-Steward/garden-vue" 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   class="inline-block mt-3 rounded-md px-5 py-2.5 font-medium text-white bg-custom-green border-0 hover:bg-darker-green active:bg-darker-green focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors">
+                   class="inline-block mt-3 rounded-md px-5 py-2.5 font-medium text-white bg-[#376451] border-0 hover:bg-[#2f5233] active:bg-[#2f5233] focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors">
                     View Frontend on GitHub
                 </a>
                 <a href="https://github.com/Garden-Steward/steward-bank" 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   class="inline-block mt-3 rounded-md px-5 py-2.5 font-medium text-white bg-custom-green border-0 hover:bg-darker-green active:bg-darker-green focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors">
+                   class="inline-block mt-3 rounded-md px-5 py-2.5 font-medium text-white bg-[#376451] border-0 hover:bg-[#2f5233] active:bg-[#2f5233] focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors">
                     View Backend on GitHub
                 </a>
             </div>
         </div>
     </div>
+    <CtaBand />
 </template>
 
 <style scoped>

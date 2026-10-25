@@ -1,13 +1,9 @@
 <template>
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
-    <div class="mx-auto max-w-[900px] px-6 py-8">
-      <RouterLink to="/regeneration" class="inline-flex items-center gap-2 font-inter text-sm font-semibold text-regen-moss hover:underline">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to the map
-      </RouterLink>
+    <PageHeader :back="{ to: '/regeneration', label: 'Back to the map' }" eyebrow="Guild volunteer view" title="Keep the map honest" width="900px" />
 
-      <p class="mt-4 font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">Guild volunteer view</p>
-      <h1 class="mt-1 font-fraunces text-[32px] font-700 leading-[1.15] text-regen-ink">Keep the map honest</h1>
-      <p class="mt-2 flex items-start gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-3 font-inter text-[13px] leading-relaxed text-regen-ink-soft">
+    <div class="mx-auto max-w-[900px] px-6 py-8">
+      <p class="flex items-start gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-3 font-inter text-[13px] leading-relaxed text-regen-ink-soft">
         <i class="fa-solid fa-circle-info mt-0.5 text-regen-moss" aria-hidden="true"></i>
         Demo moderation view. In production this sits behind Guild login, and approving a change opens a pull request. Here it updates the local dataset so you can see the flow.
       </p>
@@ -124,6 +120,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useTitle } from '@vueuse/core';
 import { useProposalsStore, useResourcesStore, useAlertStore } from '@/stores';
+import PageHeader from '@/components/PageHeader.vue';
 import { typeLabel, daysSince, STALE_DAYS } from '@/_config/RegenConfig';
 
 const proposals = useProposalsStore();

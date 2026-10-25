@@ -38,3 +38,4 @@ export { default as StewardManageView } from './StewardManageView.vue';
 export { default as ReplicateView } from './ReplicateView.vue';
 export { default as NewsletterView } from './NewsletterView.vue';
 export { default as VolunteerView } from './VolunteerView.vue';
+export { default as DemoHonestyView } from './DemoHonestyView.vue';

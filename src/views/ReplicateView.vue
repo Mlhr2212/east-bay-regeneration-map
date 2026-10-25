@@ -38,6 +38,9 @@
         <RouterLink to="/regeneration" class="inline-flex h-11 items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-5 font-inter text-sm font-semibold text-regen-ink hover:border-regen-moss">
           Back to the map
         </RouterLink>
+        <RouterLink to="/regeneration/about-this-demo" class="inline-flex h-11 items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-5 font-inter text-sm font-semibold text-regen-ink hover:border-regen-moss">
+          What this demo shows
+        </RouterLink>
       </div>
 
       <p class="mt-6 font-inter text-[13px] leading-relaxed text-regen-muted">

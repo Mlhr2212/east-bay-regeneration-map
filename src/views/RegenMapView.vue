@@ -261,6 +261,7 @@
           <RouterLink to="/regeneration/moderate" class="font-semibold text-regen-moss hover:underline">Volunteer: moderate the map</RouterLink>
           <RouterLink to="/regeneration/newsletter" class="font-semibold text-regen-moss hover:underline">Volunteer: send a newsletter</RouterLink>
           <RouterLink to="/regeneration/replicate" class="font-semibold text-regen-moss hover:underline">Replicate this map</RouterLink>
+          <RouterLink to="/regeneration/about-this-demo" class="font-semibold text-regen-moss hover:underline">What this demo shows</RouterLink>
         </nav>
       </footer>
     </div>

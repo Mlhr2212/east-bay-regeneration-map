@@ -288,3 +288,59 @@ a plain GitHub file, so any community can fork, edit, and host it themselves.
    deploy. No developer required to keep it alive. Before this map, finding a way
    to help meant knowing someone who already knew. Now it means opening one map —
    and the community keeps it current."
+
+---
+
+## Phase 2 (v6 addendum) — awareness, volunteers, handover
+
+Phase 2 adds three thin layers on top of the Phase 1 map (it does **not** build
+a training platform, a marketing site, or a second app):
+
+- **2A Awareness** (`/regeneration`): a warm, jargon-free band above the map —
+  "new here" invitation, a plain-language "what is permaculture" (Guild to
+  approve wording), three "why it matters today" cards linking to real filtered
+  views, and three real first steps (Visit / Learn / Volunteer). The map stays
+  the hero; filters are deep-linkable (`?family`, `?scenario`, `?participate`).
+- **2B Returning volunteer**: listing pages show real upcoming work parties for
+  the project's garden (reusing the existing Volunteer Day/event system — honest
+  empty state, never invented). `/regeneration/volunteer` ("My next step") shows
+  your next RSVP, a generic *draft* what-to-bring checklist, a private
+  self-reported skill checklist, and communication preferences. Training/skill
+  items carry a visible **Draft — needs expert review** badge by default.
+- **2C Handover & honesty**: `/regeneration/about-this-demo` (working vs.
+  prototype vs. ongoing effort/cost + a Guild handover checklist) and
+  `docs/EVALUATION.md` (tool evaluation + the mapping-MVP decision).
+
+### Phase 2 report
+
+- **Shipped:** 2A, 2B, and 2C in full.
+- **Cut for time:** none. Deliberately out of scope per the addendum: a full
+  course/certification platform, automated skill assessment, chat, a volunteer
+  CRM, and any auto-send/auto-publish.
+- **Evaluation decision (one paragraph):** the mapping MVP for this project is
+  the garden-vue extension (this repo), not the Lovable MVP. It extends an open
+  app the Guild's partners already use, replicates from GitHub at no licence
+  cost, and keeps data under community control. The Lovable MVP and the Oakland
+  Resilience Map could not be opened (no links were provided), so their features
+  are not guessed; if one is later shown to provide community-controlled
+  moderation, free replication, and volunteer-maintainable data ownership, the
+  decision should be re-evaluated on that evidence. See `docs/EVALUATION.md`.
+
+### Honesty notes (grounding)
+
+- The Guild's **workday SOP and V2 briefs were not provided**, so the
+  what-to-bring content is a generic draft labelled for review — no SOP content
+  was invented. See `docs/workday-sop-notes.md`.
+- Volunteer names, emails, phones, and skill self-reports are **never** shown on
+  public pages, listings, structured data, or screenshots.
+
+### Post-hackathon, in order
+
+1. Guild approves the explainer wording ("what is permaculture").
+2. Guild reviews the training/what-to-bring template and provides the real
+   **workday SOP and V2 briefs**; reviewed items flip to "Guild-reviewed".
+3. Guild confirms the mapping-MVP decision (garden-vue vs. Lovable) once the
+   Lovable MVP can actually be opened and evaluated.
+4. Name a non-technical moderator and run the weekly ~15-minute workflow
+   (moderation + monthly stale/re-crawl) for one month.
+5. Decide on a deployed backend (Fly.io + Postgres) vs. JSON-only maintenance.

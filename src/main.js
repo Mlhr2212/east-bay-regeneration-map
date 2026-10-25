@@ -8,6 +8,11 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import 'leaflet/dist/leaflet.css';
 
 import './style.css'
+import './assets/motion.css'
+
+// Gate scroll-reveal on JS being alive: only when this runs do `.rm-reveal`
+// elements start hidden. If JS fails, the gate is absent and all content shows.
+document.documentElement.classList.add('has-reveal');
 
 const app = createApp(App);
 

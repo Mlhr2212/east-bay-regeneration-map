@@ -13,12 +13,13 @@ auth.refreshRole();
 
 <template>
     <div class="app-container">
+        <a href="#main-content" class="skip-link">Skip to main content</a>
         <Nav />
         <Alert />
         <LoginModal v-if="auth.loginModalOpen" />
-        <div class="container px-0 pb-4 md:px-4 md:pt-4 pt-[5px]">
+        <main id="main-content" tabindex="-1" class="container px-0 pb-4 md:px-4 md:pt-4 pt-[5px]">
             <RouterView />
-        </div>
+        </main>
         <Footer />
     </div>
 </template>
@@ -35,5 +36,47 @@ auth.refreshRole();
     overflow: visible;
     position: relative;
     z-index: 1;
+}
+
+main#main-content:focus {
+    outline: none; /* the target of the skip link; no ring needed on the region itself */
+}
+
+/* Skip link: first focusable element, hidden until focused (WCAG 2.4.1). */
+.skip-link {
+    position: absolute;
+    left: 12px;
+    top: -48px;
+    z-index: 1000;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #2D5A3D;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.skip-link:focus {
+    top: 12px;
+    outline: 3px solid #1C2A21;
+    outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .skip-link { transition: none; }
+}
+
+/* Global visible focus safety-net: nothing interactive is left without a ring,
+   even after the polish pass. Scoped to keyboard focus so it doesn't show on click. */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid #2D5A3D;
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 </style>

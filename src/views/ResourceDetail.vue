@@ -77,7 +77,7 @@
             </div>
 
             <!-- Upcoming work parties (Phase 2B) — real events only, never invented -->
-            <div class="mt-6">
+            <div class="rm-reveal mt-6">
               <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Upcoming work parties &amp; events</h2>
               <div v-if="loadingEvents" class="mt-2 h-16 animate-pulse rounded-xl bg-regen-line/40"></div>
               <ul v-else-if="events.length" class="mt-2 space-y-2">
@@ -103,7 +103,11 @@
 
           <!-- Sidebar: map + trust + actions -->
           <aside class="space-y-4">
-            <div v-if="hasPin" class="overflow-hidden rounded-2xl border border-regen-line">
+            <!-- Decorative location preview; the neighbourhood is in text above.
+                 `inert` hides it from assistive tech AND removes Leaflet's
+                 focusable children from the tab order (aria-hidden alone can't
+                 contain focusables). -->
+            <div v-if="hasPin" inert class="overflow-hidden rounded-2xl border border-regen-line">
               <div class="h-48">
                 <StaticPinMap :latitude="resource.latitude" :longitude="resource.longitude" :zoom="resource.isPrivate ? 13 : 15" />
               </div>
@@ -142,7 +146,7 @@
           </aside>
         </div>
 
-        <div class="mt-8 border-t border-regen-line pt-6">
+        <div class="rm-reveal mt-8 border-t border-regen-line pt-6">
           <NewsletterSignup heading="Get updates on places like this" />
         </div>
       </article>
@@ -151,10 +155,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTitle } from '@vueuse/core';
 import { setMetaDescription, setJsonLd, clearJsonLd, listingJsonLd } from '@/helpers/seo';
+import { useReveal } from '@/composables/useReveal';
 import { useResourcesStore, useEventStore } from '@/stores';
 import StatusBadge from '@/components/regen/StatusBadge.vue';
 import StaticPinMap from '@/components/StaticPinMap.vue';
@@ -168,6 +173,7 @@ const route = useRoute();
 const store = useResourcesStore();
 const eventStore = useEventStore();
 
+const { scan } = useReveal();
 const resource = computed(() => store.bySlug(route.params.slug));
 const events = ref([]);
 const loadingEvents = ref(false);
@@ -218,6 +224,7 @@ watch(resource, (r) => {
     setMetaDescription(`${r.name} in ${r.neighbourhood || r.city || 'the East Bay'}: ${r.shortDescription || r.description || ''}`.trim());
     setJsonLd('ld-listing', listingJsonLd(r, window.location.href));
     loadEvents(r.gardenSlug);
+    nextTick(scan); // reveal sections once the (async) listing has rendered
   } else {
     title.value = 'Listing — East Bay Regeneration Map';
   }

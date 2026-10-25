@@ -1,13 +1,13 @@
 <template>
+  <!-- Semantic card-link pattern: the title is a real RouterLink (keyboard-
+       native, accessible name = the place's name), and a stretched ::after
+       overlay makes the whole card clickable. No div-with-click-handler.
+       @mouseenter/@focusin sync the matching map pin (selected highlight). -->
   <article
-    class="group flex cursor-pointer flex-col gap-2 rounded-2xl border border-regen-line bg-regen-surface p-5 text-left transition hover:-translate-y-px hover:border-regen-moss focus-within:border-regen-moss"
-    :class="{ 'ring-2 ring-regen-moss': selected }"
-    tabindex="0"
-    role="button"
-    :aria-label="`View ${resource.name}`"
-    @click="$emit('select', resource)"
-    @keydown.enter.prevent="$emit('select', resource)"
-    @keydown.space.prevent="$emit('select', resource)"
+    class="rm-lift rm-press group relative flex flex-col gap-2 rounded-2xl border border-regen-line bg-regen-surface p-5 text-left hover:border-regen-moss focus-within:border-regen-moss focus-within:ring-2 focus-within:ring-regen-moss"
+    :class="{ 'ring-2 ring-regen-moss bg-regen-moss/[0.03]': selected }"
+    @mouseenter="$emit('highlight', resource)"
+    @focusin="$emit('highlight', resource)"
   >
     <div class="flex items-start justify-between gap-3">
       <div class="flex items-center gap-2">
@@ -18,7 +18,11 @@
     </div>
 
     <h3 class="font-fraunces text-[18px] font-600 leading-snug text-regen-ink group-hover:text-regen-moss">
-      {{ resource.name }}
+      <RouterLink
+        :to="`/regeneration/${resource.slug}`"
+        class="rounded outline-none after:absolute after:inset-0 after:content-['']"
+        @click="$emit('select', resource)"
+      >{{ resource.name }}</RouterLink>
     </h3>
 
     <p class="font-inter text-sm text-regen-muted">
@@ -47,7 +51,7 @@ const props = defineProps({
   resource: { type: Object, required: true },
   selected: { type: Boolean, default: false },
 });
-defineEmits(['select']);
+defineEmits(['select', 'highlight']);
 
 const typeLabel = computed(() => labelFor(props.resource.type));
 const color = computed(() => typeColor(props.resource.type));

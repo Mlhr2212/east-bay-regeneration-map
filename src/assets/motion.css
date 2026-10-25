@@ -1,0 +1,139 @@
+/* ============================================================================
+   Regeneration Map — motion system (single source of truth)
+   ----------------------------------------------------------------------------
+   Principles applied (brief STEP 0):
+   - Emil Kowalski: ease-OUT for entrances, a gentle spring (slight overshoot)
+     for interactive lifts/taps; short durations for UI feedback, longer for
+     section entrances; animate transform + opacity ONLY (60fps).
+   - Impeccable: one layered-shadow scale, defined durations, restraint — no
+     pulsing dots, no decoration without reason.
+   - Taste: every value below has a reason in its comment.
+   - Accessibility: prefers-reduced-motion neutralises everything; content is
+     never hidden behind an animation (reveals fall back to visible without JS,
+     via the .has-reveal gate set only when JS runs).
+   ========================================================================== */
+
+:root {
+  /* Easing — deceleration that lands softly (quint-ish); not linear. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Gentle overshoot — physical "settle" for taps/lifts, not a loud bounce. */
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* Durations — UI feedback stays snappy; entrances get room to breathe. */
+  --motion-fast: 180ms;   /* hover, press, chip toggle */
+  --motion-ui: 280ms;     /* filter changes, list reorder, card state */
+  --motion-enter: 680ms;  /* hero / section entrances */
+  --motion-stagger: 80ms; /* gap between staggered siblings */
+
+  /* Layered shadows — one scale, reused everywhere (Impeccable: no ad-hoc shadows). */
+  --shadow-sm: 0 1px 2px rgba(28, 42, 33, 0.06);
+  --shadow-md: 0 1px 2px rgba(28, 42, 33, 0.06), 0 4px 16px rgba(28, 42, 33, 0.06);
+  --shadow-lg: 0 2px 4px rgba(28, 42, 33, 0.07), 0 14px 34px rgba(28, 42, 33, 0.10);
+}
+
+/* --- Keyframes (transform + opacity only) --------------------------------- */
+@keyframes rm-fade-rise {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+/* Opacity + translateY only (no scale) so it never fights the inner span's
+   selection scale, and lives on an inner wrapper so it never fights Leaflet's
+   positioning transform on the marker root. */
+@keyframes rm-pin-drop {
+  from { opacity: 0; transform: translate3d(0, -10px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes rm-pop-check {
+  0%   { opacity: 0; transform: scale(0.5); }
+  70%  { transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* --- Entrance: hero / section (pure CSS, runs without JS) ------------------ */
+/* .rm-enter staggers its direct children in. Uses animation-fill both so the
+   final state sticks and (during the delay) the start state shows — content is
+   on screen within <1s even if something stalls. */
+.rm-enter > * {
+  animation: rm-fade-rise var(--motion-enter) var(--ease-out) both;
+}
+.rm-enter > *:nth-child(1) { animation-delay: 40ms; }
+.rm-enter > *:nth-child(2) { animation-delay: calc(40ms + var(--motion-stagger)); }
+.rm-enter > *:nth-child(3) { animation-delay: calc(40ms + var(--motion-stagger) * 2); }
+.rm-enter > *:nth-child(4) { animation-delay: calc(40ms + var(--motion-stagger) * 3); }
+.rm-enter > *:nth-child(5) { animation-delay: calc(40ms + var(--motion-stagger) * 4); }
+
+/* --- Scroll reveal (JS-gated so content is visible if JS fails) ----------- */
+.has-reveal .rm-reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity var(--motion-enter) var(--ease-out),
+              transform var(--motion-enter) var(--ease-out);
+  will-change: transform, opacity;
+}
+.has-reveal .rm-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+/* Staggered children inside a revealed block. */
+.has-reveal .rm-reveal.is-visible .rm-reveal-child {
+  animation: rm-fade-rise var(--motion-enter) var(--ease-out) both;
+}
+.has-reveal .rm-reveal.is-visible .rm-reveal-child:nth-child(2) { animation-delay: var(--motion-stagger); }
+.has-reveal .rm-reveal.is-visible .rm-reveal-child:nth-child(3) { animation-delay: calc(var(--motion-stagger) * 2); }
+.has-reveal .rm-reveal.is-visible .rm-reveal-child:nth-child(4) { animation-delay: calc(var(--motion-stagger) * 3); }
+
+/* --- Interactive: lift + press ------------------------------------------- */
+.rm-lift {
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--motion-ui) var(--ease-spring),
+              box-shadow var(--motion-ui) var(--ease-out),
+              border-color var(--motion-fast) var(--ease-out);
+  will-change: transform;
+}
+.rm-lift:hover,
+.rm-lift:focus-visible {
+  transform: translate3d(0, -3px, 0);
+  box-shadow: var(--shadow-lg);
+}
+.rm-press { transition: transform var(--motion-fast) var(--ease-spring); }
+.rm-press:active { transform: scale(0.97); }
+
+/* --- Map pins: soft staggered drop (on load and filter change) ------------ */
+/* --rm-i is set inline per marker for a gentle cascade; capped so a big filter
+   result never delays the last pin too long. */
+.rm-pin-drop-wrap {
+  display: inline-block;
+  animation: rm-pin-drop 420ms var(--ease-out) both;
+  animation-delay: calc(min(var(--rm-i, 0) * 28ms, 500ms));
+}
+
+/* --- List filter transition (paired with <TransitionGroup name="rlist">) -- */
+.rlist-enter-from { opacity: 0; transform: translate3d(0, 12px, 0); }
+.rlist-enter-active { transition: opacity var(--motion-ui) var(--ease-out), transform var(--motion-ui) var(--ease-out); }
+.rlist-leave-active { transition: opacity var(--motion-fast) var(--ease-out); position: absolute; width: 100%; }
+.rlist-leave-to { opacity: 0; }
+.rlist-move { transition: transform var(--motion-ui) var(--ease-out); }
+
+/* --- Success check (suggest / newsletter / skill confirmations) ----------- */
+.rm-pop { animation: rm-pop-check 360ms var(--ease-spring) both; }
+
+/* --- Focus ring that eases in (forms) ------------------------------------- */
+.rm-field { transition: border-color var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out); }
+
+/* ============================================================================
+   Reduced motion — neutralise all of the above. Nothing moves, nothing hides.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .rm-enter > *,
+  .has-reveal .rm-reveal,
+  .has-reveal .rm-reveal.is-visible .rm-reveal-child,
+  .rm-pin-drop-wrap,
+  .rm-pop {
+    animation: none !important;
+  }
+  .rm-pin-drop-wrap { opacity: 1 !important; }
+  .rm-lift, .rm-press, .rm-field, .has-reveal .rm-reveal { transition: none !important; }
+  .has-reveal .rm-reveal { opacity: 1 !important; transform: none !important; }
+  .rm-lift:hover, .rm-lift:focus-visible { transform: none; box-shadow: var(--shadow-md); }
+  .rm-press:active { transform: none; }
+}

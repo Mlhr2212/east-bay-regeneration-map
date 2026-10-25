@@ -25,12 +25,15 @@ const markersBySlug = {};
 // East Bay default view, used when there are no points to fit.
 const DEFAULT_CENTER = [37.8044, -122.2712];
 
-function pinIcon(resource, selected) {
+function pinIcon(resource, selected, i = 0) {
   const color = typeColor(resource.type);
   const scale = selected ? 1.35 : 1;
+  // Outer wrapper does the staggered drop (opacity + translateY); inner span
+  // keeps the selection scale. Neither touches the marker root's Leaflet
+  // positioning transform. See motion.css.
   return L.divIcon({
     className: 'regen-pin',
-    html: `<span style="color:${color};display:inline-block;transform:scale(${scale});filter:drop-shadow(0 1px 1px rgba(28,42,33,0.35))">${pinSvg}</span>`,
+    html: `<span class="rm-pin-drop-wrap" style="--rm-i:${i}"><span style="color:${color};display:inline-block;transition:transform var(--motion-fast,180ms) var(--ease-spring,ease-out);transform:scale(${scale});filter:drop-shadow(0 1px 1px rgba(28,42,33,0.35))">${pinSvg}</span></span>`,
     iconSize: [28, 28],
     iconAnchor: [14, 28],
     popupAnchor: [0, -26],
@@ -44,10 +47,11 @@ function renderMarkers() {
   Object.keys(markersBySlug).forEach((k) => delete markersBySlug[k]);
 
   const pts = [];
+  let i = 0;
   props.resources.forEach((r) => {
     if (r.latitude == null || r.longitude == null) return;
     const marker = L.marker([r.latitude, r.longitude], {
-      icon: pinIcon(r, r.slug === props.selectedSlug),
+      icon: pinIcon(r, r.slug === props.selectedSlug, i++),
       keyboard: true,
       title: r.name,
     })
@@ -86,9 +90,11 @@ watch(() => props.resources, renderMarkers, { deep: false });
 watch(
   () => props.selectedSlug,
   (slug) => {
+    // Update scale IN PLACE on the existing inner span so the CSS transform
+    // transition springs smoothly — rebuilding the icon would replay the drop.
     Object.entries(markersBySlug).forEach(([s, m]) => {
-      const r = props.resources.find((x) => x.slug === s);
-      if (r) m.setIcon(pinIcon(r, s === slug));
+      const inner = m.getElement()?.querySelector('.rm-pin-drop-wrap > span');
+      if (inner) inner.style.transform = `scale(${s === slug ? 1.35 : 1})`;
     });
     const marker = slug && markersBySlug[slug];
     if (marker && map) {

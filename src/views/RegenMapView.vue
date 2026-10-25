@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-regen-paper font-inter text-regen-ink">
     <!-- Header: crawlable intro text (brief §9 — what it is, who for, how many, how to help) -->
     <header class="border-b border-regen-line bg-regen-surface">
-      <div class="mx-auto max-w-[1200px] px-6 py-10">
+      <div class="rm-enter mx-auto max-w-[1200px] px-6 py-10">
         <div class="flex items-start justify-between gap-4">
           <p class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-moss">East Bay Regeneration Map</p>
           <button type="button" class="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-regen-line bg-regen-surface px-3 py-1.5 font-inter text-xs font-semibold text-regen-muted transition hover:border-regen-moss hover:text-regen-ink" title="Restore the seeded demo dataset" @click="resetDemo">
@@ -43,18 +43,18 @@
         </details>
 
         <!-- Why it matters today → each links to a real filtered view -->
-        <div class="mt-6">
+        <div class="rm-reveal mt-6">
           <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Why it matters today</h2>
           <div class="mt-2 grid gap-2 sm:grid-cols-3">
-            <button type="button" class="rounded-xl border border-regen-line bg-regen-surface p-3 text-left transition hover:-translate-y-px hover:border-regen-moss" @click="focusView({ families: ['eat', 'grow'] })">
+            <button type="button" class="rm-lift rm-press rounded-xl border border-regen-line bg-regen-surface p-3 text-left hover:border-regen-moss" @click="focusView({ families: ['eat', 'grow'] })">
               <span class="font-inter text-sm font-semibold text-regen-ink"><i class="fa-solid fa-carrot mr-1.5 text-regen-moss" aria-hidden="true"></i>Food access &amp; cost</span>
               <span class="mt-0.5 block font-inter text-[13px] text-regen-ink-soft">Gardens, fridges, and pantries sharing fresh food near you.</span>
             </button>
-            <button type="button" class="rounded-xl border border-regen-line bg-regen-surface p-3 text-left transition hover:-translate-y-px hover:border-regen-moss" @click="focusView({ scenarios: ['extreme-heat', 'flooding'] })">
-              <span class="font-inter text-sm font-semibold text-regen-ink"><i class="fa-solid fa-temperature-high mr-1.5 text-regen-clay" aria-hidden="true"></i>Heat &amp; flooding</span>
+            <button type="button" class="rm-lift rm-press rounded-xl border border-regen-line bg-regen-surface p-3 text-left hover:border-regen-moss" @click="focusView({ scenarios: ['extreme-heat', 'flooding'] })">
+              <span class="font-inter text-sm font-semibold text-regen-ink"><i class="fa-solid fa-temperature-high mr-1.5 text-regen-clay-dark" aria-hidden="true"></i>Heat &amp; flooding</span>
               <span class="mt-0.5 block font-inter text-[13px] text-regen-ink-soft">Places that may help when it's dangerously hot or wet.</span>
             </button>
-            <button type="button" class="rounded-xl border border-regen-line bg-regen-surface p-3 text-left transition hover:-translate-y-px hover:border-regen-moss" @click="focusView({ families: ['gather', 'share'] })">
+            <button type="button" class="rm-lift rm-press rounded-xl border border-regen-line bg-regen-surface p-3 text-left hover:border-regen-moss" @click="focusView({ families: ['gather', 'share'] })">
               <span class="font-inter text-sm font-semibold text-regen-ink"><i class="fa-solid fa-people-group mr-1.5 text-regen-moss" aria-hidden="true"></i>Neighbourhood &amp; mutual aid</span>
               <span class="mt-0.5 block font-inter text-[13px] text-regen-ink-soft">Spaces, tool shares, and mutual-aid pods near you.</span>
             </button>
@@ -62,16 +62,16 @@
         </div>
 
         <!-- Your first way in → three real first steps -->
-        <div class="mt-6">
+        <div class="rm-reveal mt-6">
           <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Your first way in</h2>
           <div class="mt-2 flex flex-wrap gap-2">
-            <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-regen-moss px-4 py-2.5 font-inter text-sm font-semibold text-white transition hover:bg-regen-moss-dark" @click="focusView({ participate: ['visit'] })">
+            <button type="button" class="rm-lift rm-press inline-flex items-center gap-2 rounded-xl bg-regen-moss px-4 py-2.5 font-inter text-sm font-semibold text-white hover:bg-regen-moss-dark" @click="focusView({ participate: ['visit'] })">
               <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Visit a place this week
             </button>
-            <RouterLink to="/regeneration/volunteer" class="inline-flex items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-2.5 font-inter text-sm font-semibold text-regen-ink transition hover:border-regen-moss">
+            <RouterLink to="/regeneration/volunteer" class="rm-lift rm-press inline-flex items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-2.5 font-inter text-sm font-semibold text-regen-ink hover:border-regen-moss">
               <i class="fa-solid fa-book-open" aria-hidden="true"></i> Learn &amp; get ready
             </RouterLink>
-            <button type="button" class="inline-flex items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-2.5 font-inter text-sm font-semibold text-regen-ink transition hover:border-regen-moss" @click="focusView({ participate: ['volunteer'] })">
+            <button type="button" class="rm-lift rm-press inline-flex items-center gap-2 rounded-xl border border-regen-line bg-regen-surface px-4 py-2.5 font-inter text-sm font-semibold text-regen-ink hover:border-regen-moss" @click="focusView({ participate: ['volunteer'] })">
               <i class="fa-solid fa-hands-helping" aria-hidden="true"></i> Volunteer at a work party
             </button>
           </div>
@@ -162,7 +162,7 @@
                 :key="key"
                 type="button"
                 class="inline-flex h-8 items-center gap-1.5 rounded-full px-3 font-inter text-xs font-semibold transition"
-                :class="selectedScenarios.has(key) ? 'bg-regen-clay text-white' : 'border border-regen-line text-regen-ink hover:border-regen-clay'"
+                :class="selectedScenarios.has(key) ? 'bg-regen-clay-dark text-white' : 'border border-regen-line text-regen-ink hover:border-regen-clay-dark'"
                 :aria-pressed="selectedScenarios.has(key)"
                 @click="toggleSet(selectedScenarios, key)"
               ><i class="fa-solid" :class="s.icon" aria-hidden="true"></i> {{ s.label }}</button>
@@ -221,19 +221,20 @@
           </div>
           <div v-else-if="!filtered.length" class="rounded-2xl border border-dashed border-regen-line bg-regen-surface p-8 text-center">
             <p class="font-fraunces text-[20px] font-600 text-regen-ink">{{ emptyState }}</p>
-            <RouterLink to="/regeneration/suggest" class="mt-3 inline-flex items-center gap-2 rounded-xl bg-regen-clay px-4 py-2.5 font-inter text-sm font-semibold text-white hover:bg-regen-clay-dark">
+            <RouterLink to="/regeneration/suggest" class="rm-press mt-3 inline-flex items-center gap-2 rounded-xl bg-regen-clay-dark px-4 py-2.5 font-inter text-sm font-semibold text-white hover:bg-regen-moss">
               <i class="fa-solid fa-plus" aria-hidden="true"></i> Suggest a place
             </RouterLink>
           </div>
-          <div v-else class="grid gap-3">
+          <!-- Filter changes transition smoothly (transform+opacity), never flash blank. -->
+          <TransitionGroup v-else name="rlist" tag="div" class="relative grid gap-3">
             <ResourceCard
               v-for="r in filtered"
               :key="r.id"
               :resource="r"
               :selected="r.slug === selectedSlug"
-              @select="goToDetail"
+              @highlight="selectedSlug = $event.slug"
             />
-          </div>
+          </TransitionGroup>
         </section>
 
         <!-- Map -->
@@ -277,6 +278,7 @@ import ResourceCard from '@/components/regen/ResourceCard.vue';
 import NewsletterSignup from '@/components/regen/NewsletterSignup.vue';
 import { useTitle } from '@vueuse/core';
 import { setMetaDescription } from '@/helpers/seo';
+import { useReveal } from '@/composables/useReveal';
 import {
   TYPE_FAMILIES, PARTICIPATE, SCENARIOS, SCENARIO_DISCLAIMER,
 } from '@/_config/RegenConfig';
@@ -417,6 +419,7 @@ function applyQuery() {
 
 useTitle('East Bay Regeneration Map — find a way to help near you');
 setMetaDescription('A community-kept map of regeneration projects across the East Bay: community gardens, seed and tool libraries, fridges, pantries, mutual-aid, and resilience hubs. See who each place serves, whether it is active, and how to get involved.');
+useReveal();
 onMounted(() => {
   if (!store.resources.length) store.fetchAll();
   applyQuery();

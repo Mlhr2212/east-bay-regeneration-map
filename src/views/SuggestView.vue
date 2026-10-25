@@ -7,7 +7,7 @@
 
       <!-- Success state -->
       <div v-if="done" class="mt-8 rounded-2xl border border-regen-line bg-regen-surface p-8 text-center">
-        <i class="fa-solid fa-circle-check text-3xl text-regen-success" aria-hidden="true"></i>
+        <i class="rm-pop fa-solid fa-circle-check inline-block text-3xl text-regen-success" aria-hidden="true"></i>
         <h1 class="mt-3 font-fraunces text-[26px] font-600 text-regen-ink">Thank you — sent for review.</h1>
         <p class="mt-2 font-inter text-regen-ink-soft">
           A Guild volunteer will check this before anything goes public. Nothing you submit appears on the map until it's approved.
@@ -35,29 +35,31 @@
             {{ mode === 'report' ? 'Reporting' : 'Correcting' }}: <span class="font-semibold text-regen-ink">{{ targetName }}</span>
           </div>
 
+          <p class="font-inter text-[13px] text-regen-muted">Fields marked <span class="font-semibold text-regen-danger">*</span> are required.</p>
+
           <!-- Name (new only) -->
           <div v-if="mode === 'new'">
-            <label :class="labelCls" for="f-name">Name of the place <span class="text-regen-danger">*</span></label>
-            <input id="f-name" v-model.trim="form.name" type="text" :class="inputCls" placeholder="e.g. South Berkeley Repair Café" />
-            <p v-if="errors.name" :class="errCls">{{ errors.name }}</p>
+            <label :class="labelCls" for="f-name">Name of the place <span class="text-regen-danger" aria-hidden="true">*</span></label>
+            <input id="f-name" v-model.trim="form.name" type="text" :class="[inputCls, 'rm-field']" placeholder="e.g. South Berkeley Repair Café" aria-required="true" :aria-invalid="!!errors.name" :aria-describedby="errors.name ? 'err-name' : undefined" />
+            <p v-if="errors.name" id="err-name" role="alert" :class="errCls">{{ errors.name }}</p>
           </div>
 
           <!-- Type (new only) -->
           <div v-if="mode === 'new'">
-            <label :class="labelCls" for="f-type">Type of resource <span class="text-regen-danger">*</span></label>
-            <select id="f-type" v-model="form.type" :class="inputCls">
+            <label :class="labelCls" for="f-type">Type of resource <span class="text-regen-danger" aria-hidden="true">*</span></label>
+            <select id="f-type" v-model="form.type" :class="[inputCls, 'rm-field']" aria-required="true" :aria-invalid="!!errors.type" :aria-describedby="errors.type ? 'err-type' : undefined">
               <option value="">Choose a type…</option>
               <option v-for="(t, key) in resourceTypes" :key="key" :value="key">{{ t.label }}</option>
             </select>
-            <p v-if="errors.type" :class="errCls">{{ errors.type }}</p>
+            <p v-if="errors.type" id="err-type" role="alert" :class="errCls">{{ errors.type }}</p>
           </div>
 
           <!-- Neighbourhood + city (new only) -->
           <div v-if="mode === 'new'" class="grid gap-5 sm:grid-cols-2">
             <div>
-              <label :class="labelCls" for="f-nb">Neighbourhood <span class="text-regen-danger">*</span></label>
-              <input id="f-nb" v-model.trim="form.neighbourhood" type="text" :class="inputCls" placeholder="e.g. Fruitvale" />
-              <p v-if="errors.neighbourhood" :class="errCls">{{ errors.neighbourhood }}</p>
+              <label :class="labelCls" for="f-nb">Neighbourhood <span class="text-regen-danger" aria-hidden="true">*</span></label>
+              <input id="f-nb" v-model.trim="form.neighbourhood" type="text" :class="[inputCls, 'rm-field']" placeholder="e.g. Fruitvale" aria-required="true" :aria-invalid="!!errors.neighbourhood" :aria-describedby="errors.neighbourhood ? 'err-nb' : undefined" />
+              <p v-if="errors.neighbourhood" id="err-nb" role="alert" :class="errCls">{{ errors.neighbourhood }}</p>
             </div>
             <div>
               <label :class="labelCls" for="f-city">City</label>
@@ -83,20 +85,20 @@
 
           <!-- Details (all modes) -->
           <div>
-            <label :class="labelCls" for="f-details">{{ detailsLabel }} <span class="text-regen-danger">*</span></label>
-            <textarea id="f-details" v-model.trim="form.details" rows="4" :class="inputCls" :placeholder="detailsPlaceholder"></textarea>
-            <p v-if="errors.details" :class="errCls">{{ errors.details }}</p>
+            <label :class="labelCls" for="f-details">{{ detailsLabel }} <span class="text-regen-danger" aria-hidden="true">*</span></label>
+            <textarea id="f-details" v-model.trim="form.details" rows="4" :class="[inputCls, 'rm-field']" :placeholder="detailsPlaceholder" aria-required="true" :aria-invalid="!!errors.details" :aria-describedby="errors.details ? 'err-details' : undefined"></textarea>
+            <p v-if="errors.details" id="err-details" role="alert" :class="errCls">{{ errors.details }}</p>
           </div>
 
           <!-- Source -->
           <div>
             <label :class="labelCls" for="f-source">Public source link</label>
-            <input id="f-source" v-model.trim="form.source" type="url" :class="inputCls" placeholder="https://…" :disabled="form.firsthand" />
+            <input id="f-source" v-model.trim="form.source" type="url" :class="[inputCls, 'rm-field']" placeholder="https://…" :disabled="form.firsthand" :aria-invalid="!!errors.source" :aria-describedby="errors.source ? 'err-source' : undefined" />
             <label class="mt-2 inline-flex cursor-pointer items-center gap-2 font-inter text-sm text-regen-ink-soft">
               <input type="checkbox" v-model="form.firsthand" class="h-4 w-4 rounded border-regen-line text-regen-moss focus:ring-regen-moss" />
               I don't have a link — I know this project personally
             </label>
-            <p v-if="errors.source" :class="errCls">{{ errors.source }}</p>
+            <p v-if="errors.source" id="err-source" role="alert" :class="errCls">{{ errors.source }}</p>
           </div>
         </div>
 
@@ -112,7 +114,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTitle } from '@vueuse/core';
 import { useProposalsStore, useResourcesStore, useAlertStore } from '@/stores';
@@ -173,9 +175,15 @@ function validate() {
   return Object.keys(errors).length === 0;
 }
 
+// Map error keys to field ids so we can move focus to the first invalid field
+// on submit (WCAG 3.3.1 — error identification + focus management).
+const ERR_FIELD_ID = { name: 'f-name', type: 'f-type', neighbourhood: 'f-nb', details: 'f-details', source: 'f-source' };
+
 function onSubmit() {
   if (!validate()) {
     alert.error('Please fix the highlighted fields.');
+    const firstKey = Object.keys(errors)[0];
+    nextTick(() => document.getElementById(ERR_FIELD_ID[firstKey])?.focus());
     return;
   }
   const kind = mode.value === 'new' ? 'new' : 'correction';

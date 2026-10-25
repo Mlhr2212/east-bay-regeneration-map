@@ -38,14 +38,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: #1C2A21; /* AA on the sage footer (#8da382): 5.49:1, was white 3.2:1 */
   text-decoration: none;
   transition: color 0.2s ease, opacity 0.2s ease;
   margin-top: 1rem;
 }
 
 .contribute-link:hover {
-  color: #f7f1e3;
+  color: #163022; /* 5.20:1 on sage */
   text-decoration: underline;
 }
 

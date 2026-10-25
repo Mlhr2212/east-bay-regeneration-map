@@ -261,7 +261,7 @@ const handleEscape = (e) => {
                 </div>
             </div>
 
-            <button class="sidemenu__btn" v-on:click="navOpen=!navOpen" v-bind:class="{active:navOpen}">
+            <button class="sidemenu__btn" v-on:click="navOpen=!navOpen" v-bind:class="{active:navOpen}" type="button" aria-label="Toggle navigation menu" :aria-expanded="navOpen">
                 <span class="top"></span>
                 <span class="mid"></span>
                 <span class="bottom"></span>

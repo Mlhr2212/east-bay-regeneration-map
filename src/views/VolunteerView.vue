@@ -17,7 +17,7 @@
       </p>
 
       <!-- Next work party -->
-      <section class="mt-6">
+      <section class="rm-reveal mt-6">
         <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Your next work party</h2>
         <div v-if="loadingEvents" class="mt-2 h-20 animate-pulse rounded-2xl bg-regen-line/40"></div>
         <ul v-else-if="myEvents.length" class="mt-2 space-y-2">
@@ -39,7 +39,7 @@
       </section>
 
       <!-- What to bring (draft template) -->
-      <section class="mt-8">
+      <section class="rm-reveal mt-8">
         <div class="flex items-center gap-2">
           <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">What to bring &amp; expect</h2>
           <ReviewBadge :review="template.review" />
@@ -52,7 +52,7 @@
       </section>
 
       <!-- Skill self-report (private) -->
-      <section class="mt-8">
+      <section class="rm-reveal mt-8">
         <div class="flex items-center gap-2">
           <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Your skills</h2>
           <ReviewBadge review="draft" />
@@ -60,15 +60,16 @@
         <p class="mt-1 font-inter text-[13px] text-regen-muted">Self-reported, for you and your organiser only — never shown publicly.</p>
         <div class="mt-3 space-y-2">
           <div v-for="skill in skills" :key="skill.key" class="flex flex-col gap-2 rounded-2xl border border-regen-line bg-regen-surface p-3 sm:flex-row sm:items-center sm:justify-between">
-            <span class="font-inter text-sm font-semibold text-regen-ink">{{ skill.label }}</span>
-            <div class="flex gap-1.5">
+            <span :id="`skill-${skill.key}`" class="font-inter text-sm font-semibold text-regen-ink">{{ skill.label }}</span>
+            <div class="flex gap-1.5" role="group" :aria-labelledby="`skill-${skill.key}`">
               <button
                 v-for="lvl in levels"
                 :key="lvl.key"
                 type="button"
-                class="rounded-full px-3 py-1.5 font-inter text-xs font-semibold transition"
+                class="rm-press rounded-full px-3 py-1.5 font-inter text-xs font-semibold transition"
                 :class="volunteer.skills[skill.key] === lvl.key ? 'bg-regen-moss text-white' : 'border border-regen-line text-regen-ink hover:border-regen-moss'"
                 :aria-pressed="volunteer.skills[skill.key] === lvl.key"
+                :aria-label="`${skill.label}: ${lvl.label}`"
                 @click="setSkill(skill.key, lvl.key)"
               >{{ lvl.label }}</button>
             </div>
@@ -77,25 +78,27 @@
       </section>
 
       <!-- Communication preferences -->
-      <section class="mt-8">
+      <section class="rm-reveal mt-8">
         <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">How we keep in touch</h2>
         <p class="mt-1 font-inter text-[13px] text-regen-muted">We only contact you the way you choose. No preference means nothing beyond a confirmation for something you RSVP to.</p>
         <div class="mt-3 grid gap-4 sm:grid-cols-2">
           <div>
-            <label class="mb-1.5 block font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Channel</label>
-            <div class="flex flex-wrap gap-1.5">
+            <span id="pref-channel" class="mb-1.5 block font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Channel</span>
+            <div class="flex flex-wrap gap-1.5" role="group" aria-labelledby="pref-channel">
               <button v-for="c in channels" :key="c.key" type="button"
-                class="rounded-full px-3 py-1.5 font-inter text-xs font-semibold transition"
+                class="rm-press rounded-full px-3 py-1.5 font-inter text-xs font-semibold transition"
                 :class="volunteer.contact.channel === c.key ? 'bg-regen-moss text-white' : 'border border-regen-line text-regen-ink hover:border-regen-moss'"
+                :aria-pressed="volunteer.contact.channel === c.key"
                 @click="volunteer.setContact({ channel: c.key })">{{ c.label }}</button>
             </div>
           </div>
           <div>
-            <label class="mb-1.5 block font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Frequency</label>
-            <div class="flex flex-wrap gap-1.5">
+            <span id="pref-frequency" class="mb-1.5 block font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Frequency</span>
+            <div class="flex flex-wrap gap-1.5" role="group" aria-labelledby="pref-frequency">
               <button v-for="f in frequencies" :key="f.key" type="button"
-                class="rounded-full px-3 py-1.5 font-inter text-xs font-semibold transition"
+                class="rm-press rounded-full px-3 py-1.5 font-inter text-xs font-semibold transition"
                 :class="volunteer.contact.frequency === f.key ? 'bg-regen-moss text-white' : 'border border-regen-line text-regen-ink hover:border-regen-moss'"
+                :aria-pressed="volunteer.contact.frequency === f.key"
                 @click="volunteer.setContact({ frequency: f.key })">{{ f.label }}</button>
             </div>
           </div>
@@ -111,9 +114,12 @@ import { useRouter } from 'vue-router';
 import { useTitle } from '@vueuse/core';
 import { useAuthStore, useEventStore } from '@/stores';
 import { useVolunteerStore } from '@/stores/volunteer.store';
+import { useReveal } from '@/composables/useReveal';
 import {
   WORKDAY_TEMPLATE, VOLUNTEER_SKILLS, SKILL_LEVELS, CONTACT_CHANNELS, CONTACT_FREQUENCY, REVIEW_LABELS,
 } from '@/_config/RegenConfig';
+
+useReveal();
 
 // Tiny inline review-status badge (brief addendum §2B.3).
 const ReviewBadge = (props) => {

@@ -13,7 +13,7 @@
 
     <div class="mx-auto max-w-[820px] px-6 py-8 space-y-10">
       <!-- Demonstrated & working -->
-      <section>
+      <section class="rm-reveal">
         <h2 class="font-fraunces text-[22px] font-600 text-regen-ink"><i class="fa-solid fa-circle-check mr-2 text-regen-success" aria-hidden="true"></i>Demonstrated and working</h2>
         <ul class="mt-3 space-y-2">
           <li v-for="item in working" :key="item" class="flex items-start gap-2 font-inter text-[15px] leading-relaxed text-regen-ink-soft">
@@ -23,7 +23,7 @@
       </section>
 
       <!-- Prototype / demo-only -->
-      <section>
+      <section class="rm-reveal">
         <h2 class="font-fraunces text-[22px] font-600 text-regen-ink"><i class="fa-solid fa-flask mr-2 text-regen-warning" aria-hidden="true"></i>Prototype / demo-only (be honest)</h2>
         <ul class="mt-3 space-y-2">
           <li v-for="item in prototype" :key="item.title" class="rounded-xl border border-regen-line bg-regen-surface p-3">
@@ -34,7 +34,7 @@
       </section>
 
       <!-- Ongoing effort & cost -->
-      <section>
+      <section class="rm-reveal">
         <h2 class="font-fraunces text-[22px] font-600 text-regen-ink"><i class="fa-solid fa-clock mr-2 text-regen-moss" aria-hidden="true"></i>Ongoing effort &amp; cost</h2>
         <div class="mt-3 overflow-x-auto">
           <table class="w-full border-collapse font-inter text-[14px]">
@@ -76,7 +76,7 @@
       </section>
 
       <!-- Handover checklist -->
-      <section>
+      <section class="rm-reveal">
         <h2 class="font-fraunces text-[22px] font-600 text-regen-ink"><i class="fa-solid fa-clipboard-check mr-2 text-regen-moss" aria-hidden="true"></i>Handover checklist for the Guild</h2>
         <ol class="mt-3 space-y-2">
           <li v-for="(step, i) in handover" :key="i" class="flex items-start gap-3 rounded-xl border border-regen-line bg-regen-surface p-3 font-inter text-[15px] text-regen-ink-soft">
@@ -96,6 +96,9 @@
 
 <script setup>
 import { useTitle } from '@vueuse/core';
+import { useReveal } from '@/composables/useReveal';
+
+useReveal();
 
 const working = [
   'Discover: search, family / neighbourhood / participation / scenario filters, "near me", live count, split map + list.',

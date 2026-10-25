@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores';
 import { PublicHomeView, HomeView, LoginView, GardenManage, GardenPublic, GardensView, GardensPublicView, SetPassword,
     InstructionPublic, HelpView,
-    BlogList, BlogDetail, EventView, EventsList, MapView, ContributeView, PrivacyView, ProjectPublic, ProjectManage, ProjectsView, ProjectsPublicView, ProjectAlertUnsubscribe, EventTemplatesView, GardenTasksPublic, TaskDetailPublic, ManifestoView, VerifyEmail, PlantsDirectory, PlantsDetail, AboutView, UsageView, RegenMapView, ResourceDetail, SuggestView, ModerateView, StewardManageView, ReplicateView, NewsletterView, VolunteerView, DemoHonestyView } from '@/views';
+    BlogList, BlogDetail, EventView, EventsList, ContributeView, PrivacyView, ProjectPublic, ProjectManage, ProjectsView, ProjectsPublicView, ProjectAlertUnsubscribe, EventTemplatesView, GardenTasksPublic, TaskDetailPublic, ManifestoView, VerifyEmail, PlantsDirectory, PlantsDetail, AboutView, UsageView, RegenMapView, ResourceDetail, SuggestView, ModerateView, StewardManageView, ReplicateView, NewsletterView, VolunteerView, DemoHonestyView } from '@/views';
 import { EventEditor, TaskMessages } from '@/views/admin';
 import GoogleOAuth from './oauth-google-callback/oauth-google-callback.vue'
 
@@ -53,8 +53,10 @@ export const router = createRouter({
             component: BlogDetail
         },
         {
+            // The old Pollinator map renders blank; the regeneration map is the
+            // working, canonical map, so send /map there until /map is fixed.
             path: '/map',
-            component: MapView
+            redirect: '/regeneration'
         },
         {
             path: '/regeneration',
@@ -253,34 +255,6 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-    const publicPages = [
-        '/login', 
-        '/oauth/google/callback', 
-        '/set-password',
-        '/verify-email',
-        '/', 
-        '/about',
-        '/help', 
-        '/blog', 
-        '/events', 
-        '/contribute',
-        '/manifesto',
-        '/map',
-        '/regeneration',
-        '/privacy',
-        '/gardens',
-        '/projects',
-        '/alerts/unsubscribe'
-    ];
-    
-    // Check if route starts with public patterns
-    const isPublicRoute = publicPages.includes(to.path) || 
-                         to.path.startsWith('/i/') ||
-                         to.path.startsWith('/blog/') ||
-                         to.path.startsWith('/regeneration') ||
-                         to.path.startsWith('/d/') ||
-                         to.path.startsWith('/gardens/'); // Public garden pages (includes nested project pages)
-    
     const authRequired = to.meta.requiresAuth || to.path.startsWith('/manage/');
     const auth = useAuthStore();
     

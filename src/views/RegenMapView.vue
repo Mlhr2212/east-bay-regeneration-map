@@ -13,7 +13,7 @@
           Find a way to help, close to home.
         </h1>
         <p class="mt-3 max-w-2xl font-inter text-[16px] leading-relaxed text-regen-ink-soft">
-          A community-kept map of {{ totalCount }} regeneration projects across the East Bay — community gardens,
+          A community-kept map of regeneration projects across the East Bay — community gardens,
           seed and tool libraries, fridges, pantries, mutual-aid, and resilience hubs. See who each place serves,
           whether it's active, and how to get involved. Anyone can
           <RouterLink to="/regeneration/suggest" class="font-semibold text-regen-moss underline underline-offset-2">suggest a place</RouterLink>,
@@ -201,8 +201,11 @@
         <!-- Count + source + mobile view toggle -->
         <div class="flex items-center justify-between gap-3">
           <p class="font-inter text-sm font-semibold text-regen-ink" aria-live="polite">
-            {{ filtered.length }} {{ filtered.length === 1 ? 'place' : 'places' }}
-            <span v-if="store.source === 'fallback'" class="ml-2 font-normal text-regen-warning" title="Backend unreachable — showing the bundled dataset">· offline sample data</span>
+            <span v-if="store.loading">Loading places…</span>
+            <template v-else>{{ filtered.length }} {{ filtered.length === 1 ? 'place' : 'places' }}</template>
+            <span v-if="!store.loading && store.source === 'fallback'" class="ml-2 inline-flex items-center gap-1 rounded-full bg-regen-warning/10 px-2 py-0.5 text-[12px] font-semibold text-regen-warning" title="Live backend not connected — showing the community's bundled sample dataset">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i> sample data (offline)
+            </span>
           </p>
           <div class="flex gap-1 rounded-xl border border-regen-line bg-regen-surface p-1 lg:hidden">
             <button type="button" class="rounded-lg px-3 py-1.5 font-inter text-sm font-semibold" :class="mobileView === 'list' ? 'bg-regen-moss text-white' : 'text-regen-ink'" @click="mobileView = 'list'">List</button>
@@ -259,6 +262,7 @@
         <NewsletterSignup heading="Keep up with East Bay regeneration" />
         <nav class="flex flex-col gap-2 font-inter text-sm md:items-end">
           <RouterLink to="/regeneration/suggest" class="font-semibold text-regen-moss hover:underline">Suggest a place</RouterLink>
+          <RouterLink to="/regeneration/volunteer" class="font-semibold text-regen-moss hover:underline">My next step (returning volunteers)</RouterLink>
           <RouterLink to="/regeneration/moderate" class="font-semibold text-regen-moss hover:underline">Volunteer: moderate the map</RouterLink>
           <RouterLink to="/regeneration/newsletter" class="font-semibold text-regen-moss hover:underline">Volunteer: send a newsletter</RouterLink>
           <RouterLink to="/regeneration/replicate" class="font-semibold text-regen-moss hover:underline">Replicate this map</RouterLink>
@@ -315,7 +319,6 @@ const userLoc = ref(null);
 const mobileView = ref('list');
 const selectedSlug = ref(null);
 
-const totalCount = computed(() => store.resources.length || 21);
 
 function toggleSet(set, key) {
   set.has(key) ? set.delete(key) : set.add(key);

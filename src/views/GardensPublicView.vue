@@ -14,6 +14,7 @@ const { gardens } = storeToRefs(gardensStore);
 const { user } = storeToRefs(authStore);
 
 gardensStore.getAllPublic();
+const retryGardens = () => gardensStore.getAllPublic();
 
 // Same chip vocabulary as the Projects list, framed around what gets someone
 // through the gate: is there a workday soon, and is anything being built.
@@ -256,7 +257,13 @@ onUnmounted(() => {
       </article>
 
       <p v-if="gardens.loading" class="glist-state">Loading gardens…</p>
-      <p v-else-if="gardens.error" class="glist-state">Couldn't load gardens. Try again in a moment.</p>
+      <div v-else-if="gardens.error" class="glist-state" role="alert">
+        <p style="margin:0 0 12px">We couldn't load gardens right now.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+          <button type="button" class="gp-btn gp-btn-primary gp-btn-sm" @click="retryGardens">Retry</button>
+          <router-link to="/regeneration" class="gp-btn gp-btn-outline gp-btn-sm">Browse the regeneration map</router-link>
+        </div>
+      </div>
       <p v-else-if="!visibleGardens.length" class="glist-state">
         {{ filter === 'All' ? 'No gardens listed yet.' : `No gardens match “${filter.toLowerCase()}” right now.` }}
       </p>

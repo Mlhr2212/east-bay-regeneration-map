@@ -70,19 +70,20 @@ export const useEventStore = defineStore({
                         };
                     } else {
                         // null / forbidden / unexpected shape (backend down or 403):
-                        // fall back to an honest empty list — never crash the page.
-                        this.events = Array.isArray(res?.data) ? res.data : [];
+                        // a real failure → error state (shows a persistent retry UI),
+                        // distinct from a genuinely empty list (data: []).
+                        this.events = { error: true };
                         this.eventsPagination = { page: 1, pageSize, pageCount: 0, total: 0 };
                     }
                     return this.events;
                 })
                 .catch(err => {
-                    // Backend unreachable/forbidden → show the honest empty state
-                    // (brief's safe fallback), not an uncaught crash.
-                    console.warn('events fetchPublic failed; showing empty state:', err?.message || err);
-                    this.events = [];
+                    // Backend unreachable/forbidden → persistent error state with
+                    // retry, never an uncaught crash and never silent skeletons.
+                    console.warn('events fetchPublic failed:', err?.message || err);
+                    this.events = { error: true };
                     this.eventsPagination = { page: 1, pageSize, pageCount: 0, total: 0 };
-                    return [];
+                    return this.events;
                 });
         },
         async loadMoreEvents() {

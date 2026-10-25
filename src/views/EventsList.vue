@@ -16,6 +16,7 @@ const { events, eventsPagination } = storeToRefs(eventStore);
 
 // The public feed is small, so take it in one page and filter here.
 eventStore.fetchPublic(1, 100);
+const retry = () => eventStore.fetchPublic(1, 100);
 
 const isLoading = computed(() => !!events.value?.loading);
 const loadFailed = computed(() => !!events.value?.error);
@@ -191,7 +192,13 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
         <div v-for="n in 3" :key="n" class="evl-skeleton animate-pulse"></div>
       </div>
 
-      <p v-else-if="loadFailed" class="evl-empty">Couldn't load events. Try refreshing the page.</p>
+      <div v-else-if="loadFailed" class="evl-empty" role="alert">
+        <p style="margin:0 0 12px">We couldn't load upcoming events right now — the live events service isn't reachable.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+          <button type="button" class="gp-btn gp-btn-primary gp-btn-sm" @click="retry">Retry</button>
+          <router-link to="/regeneration" class="gp-btn gp-btn-outline gp-btn-sm">Browse the regeneration map</router-link>
+        </div>
+      </div>
 
       <template v-else>
         <!-- Next up -->
@@ -337,7 +344,7 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
 .evl-count {
   font-size: 0.75rem;
   font-weight: 700;
-  opacity: 0.6;
+  opacity: 0.85; /* 0.6 dropped the active-tab count below AA contrast */
 }
 
 .evl-chips {

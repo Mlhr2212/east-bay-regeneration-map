@@ -12,6 +12,16 @@
     </header>
 
     <div class="mx-auto max-w-[820px] px-6 py-8 space-y-10">
+      <!-- Known issues (honest status as of the demo) -->
+      <section class="rm-reveal rounded-2xl border border-regen-warning/30 bg-regen-warning/5 p-5">
+        <h2 class="font-fraunces text-[20px] font-600 text-regen-ink"><i class="fa-solid fa-triangle-exclamation mr-2 text-regen-warning" aria-hidden="true"></i>Known issues (as of Oct 25)</h2>
+        <ul class="mt-3 space-y-1.5 font-inter text-[15px] leading-relaxed text-regen-ink-soft">
+          <li>The regeneration map runs on a bundled <strong>sample dataset</strong> when the live backend isn't connected (e.g. on the public demo link) — it says so on the map. Everything stays functional.</li>
+          <li>Events, gardens, and projects need the <strong>live backend</strong> running. Without it they show a clear "couldn't load" state with a Retry and a link to the map — never a blank page.</li>
+          <li>The old Garden Steward "/map" (Pollinator Pathways) was blank, so it now redirects to this regeneration map.</li>
+        </ul>
+      </section>
+
       <!-- Demonstrated & working -->
       <section class="rm-reveal">
         <h2 class="font-fraunces text-[22px] font-600 text-regen-ink"><i class="fa-solid fa-circle-check mr-2 text-regen-success" aria-hidden="true"></i>Demonstrated and working</h2>

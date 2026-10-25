@@ -57,7 +57,7 @@ module.exports = {
           'sage-dark': '#5A7A68',
           clay: '#C96F4A',
           'clay-dark': '#9E4E2F',
-          success: '#2D7D4F',
+          success: '#1F6B3E',
           warning: '#8F5E13',
           danger: '#B42318',
         },

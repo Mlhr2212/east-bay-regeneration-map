@@ -120,6 +120,10 @@
 /* --- Focus ring that eases in (forms) ------------------------------------- */
 .rm-field { transition: border-color var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out); }
 
+/* Bootstrap ships a pink <code> colour (#e83e8c) that fails AA on our paper.
+   On regeneration pages (all rooted in .bg-regen-paper) use ink instead. */
+.bg-regen-paper code { color: #1C2A21; }
+
 /* ============================================================================
    Reduced motion — neutralise all of the above. Nothing moves, nothing hides.
    ========================================================================== */

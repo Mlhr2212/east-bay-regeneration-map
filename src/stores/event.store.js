@@ -56,7 +56,7 @@ export const useEventStore = defineStore({
             return fetchWrapper.get(url)
                 .then(res => {
                     // Handle Strapi pagination response format
-                    if (res.data && res.meta?.pagination) {
+                    if (res && res.data && res.meta?.pagination) {
                         this.events = res.data;
                         this.eventsPagination = res.meta.pagination;
                     } else if (Array.isArray(res)) {
@@ -69,11 +69,21 @@ export const useEventStore = defineStore({
                             total: res.length
                         };
                     } else {
-                        this.events = res;
+                        // null / forbidden / unexpected shape (backend down or 403):
+                        // fall back to an honest empty list — never crash the page.
+                        this.events = Array.isArray(res?.data) ? res.data : [];
+                        this.eventsPagination = { page: 1, pageSize, pageCount: 0, total: 0 };
                     }
-                    return res;
+                    return this.events;
                 })
-                .catch(this.handleError);
+                .catch(err => {
+                    // Backend unreachable/forbidden → show the honest empty state
+                    // (brief's safe fallback), not an uncaught crash.
+                    console.warn('events fetchPublic failed; showing empty state:', err?.message || err);
+                    this.events = [];
+                    this.eventsPagination = { page: 1, pageSize, pageCount: 0, total: 0 };
+                    return [];
+                });
         },
         async loadMoreEvents() {
             const nextPage = this.eventsPagination.page + 1;

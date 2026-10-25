@@ -125,11 +125,15 @@ const relativeDay = (s) => {
 const placeOf = (e) => e.garden?.title || e.location_name || '';
 const hostOf = (e) => e.garden?.organization?.title || '';
 
+// Seeded media can point at files that don't exist; fall back to the placeholder.
+const failedImages = ref(new Set());
+const onImageError = (ev) => { failedImages.value = new Set(failedImages.value).add(ev.target.getAttribute('src')); };
 const imageOf = (e, size = 'small') => {
   const img = e?.hero_image || e?.garden?.hero_image;
   const url = img?.formats?.[size]?.url || img?.formats?.small?.url || img?.formats?.thumbnail?.url || img?.url;
-  if (url && url.startsWith('/') && import.meta.env.VITE_API_URL) return `${import.meta.env.VITE_API_URL}${url}`;
-  return url || null;
+  if (!url) return null;
+  const full = url.startsWith('/') && import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}${url}` : url;
+  return failedImages.value.has(full) ? null : full;
 };
 
 const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -210,7 +214,7 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
       <template v-else>
         <!-- Next up -->
         <router-link v-if="featured" :to="`/d/${featured.id}`" class="evl-feature">
-          <img v-if="imageOf(featured, 'medium')" :src="imageOf(featured, 'medium')" :alt="placeOf(featured)" class="evl-feature-img" />
+          <img v-if="imageOf(featured, 'medium')" :src="imageOf(featured, 'medium')" :alt="placeOf(featured)" class="evl-feature-img" @error="onImageError" />
           <div v-else class="evl-feature-img evl-img-placeholder" aria-hidden="true"><i class="fa-solid fa-seedling"></i></div>
           <div class="evl-feature-body">
             <p class="gp-label gp-label--accent">
@@ -256,7 +260,7 @@ const plainBlurb = (e) => (e.blurb || '').replace(/<[^>]+>/g, ' ').replace(/\s+/
                 </span>
                 <span v-if="plainBlurb(e)" class="evl-row-blurb">{{ plainBlurb(e) }}</span>
               </span>
-              <img v-if="imageOf(e)" :src="imageOf(e)" alt="" class="evl-row-img" loading="lazy" />
+              <img v-if="imageOf(e)" :src="imageOf(e)" alt="" class="evl-row-img" loading="lazy" @error="onImageError" />
               <span v-else class="evl-row-img evl-img-placeholder" aria-hidden="true"><i class="fa-solid fa-seedling"></i></span>
             </router-link>
           </div>

@@ -22,6 +22,7 @@ export const useEventStore = defineStore({
         event: {},
         events: {},
         eventsSource: 'api', // 'api' | 'fallback' (bundled sample when backend is down)
+        eventSource: 'api',
         eventsPagination: {
             page: 1,
             pageSize: 15,
@@ -128,12 +129,34 @@ export const useEventStore = defineStore({
             // v5 core findOne keys on documentId, but our /d/:id routes (and SMS
             // links) use the numeric id — resolve via the custom by-id route,
             // which populates server-side and returns a flat { data } entry.
+            // No backend (public preview) or a dead link → the bundled sample
+            // events, quietly; a miss there is a real not-found, not a toast.
+            const useSampleFallback = async () => {
+                try {
+                    const data = (await import('@/data/events.json')).default;
+                    const arr = Array.isArray(data) ? data : [];
+                    const found = arr.find(e => String(e.id) === String(id));
+                    if (found) {
+                        this.event = found;
+                        this.eventSource = 'fallback';
+                    } else {
+                        this.event = { error: 'not-found' };
+                    }
+                } catch {
+                    this.event = { error: 'not-found' };
+                }
+                return this.event;
+            };
             return fetchWrapper.get(`${baseUrl}/by-id/${id}`)
                 .then(res => {
-                    this.event = res.data;
-                    return res.data;
+                    if (res && res.data) {
+                        this.event = res.data;
+                        this.eventSource = 'api';
+                        return res.data;
+                    }
+                    return useSampleFallback();
                 })
-                .catch(this.handleError);
+                .catch(() => useSampleFallback());
         },
         async fetchDaySheet(id) {
             return fetchWrapper.get(`${baseUrl}/by-id/${id}/day-sheet`)

@@ -3,6 +3,9 @@ import { defineStore } from 'pinia';
 import { fetchWrapper, router } from '@/helpers';
 
 const baseUrl = `${import.meta.env.VITE_API_URL}`;
+// False in the public preview (VITE_API_URL unset) — the app then runs on
+// bundled sample data and auth calls are skipped entirely.
+const backendAvailable = !!import.meta.env.VITE_API_URL;
 import { localStorageTokenKey } from '../constants';
 
 export const useAuthStore = defineStore({
@@ -14,10 +17,12 @@ export const useAuthStore = defineStore({
             accessToken: localStorage.getItem(localStorageTokenKey),
         },
         returnUrl: null,
-        loginModalOpen: false
+        loginModalOpen: false,
+        loginModalMode: 'email'
     }),
     getters: {
         isLoggedIn: (state) => !!state.user,
+        backendAvailable: () => backendAvailable,
         // Users & Permissions "Administrator" role. Match the name too, in case
         // the role's type slug differs from what Strapi derived at creation.
         isAdmin: (state) => {
@@ -59,6 +64,16 @@ export const useAuthStore = defineStore({
             if (redirect) {
                 router.push(this.returnUrl || '/manage');
             }
+            return user;
+        },
+        async register({ name, email, password }) {
+            const { jwt, user } = await fetchWrapper.post(`${baseUrl}/api/auth/local/register`, {
+                username: email,
+                email,
+                password,
+                firstName: name
+            });
+            this.setSession(jwt, user);
             return user;
         },
         async forgot(email) {
@@ -121,13 +136,15 @@ export const useAuthStore = defineStore({
                 // keep the stored role
             }
         },
-        openLoginModal(returnUrl) {
+        openLoginModal(returnUrl, mode = 'email') {
             this.returnUrl = returnUrl || null;
+            this.loginModalMode = mode;
             this.loginModalOpen = true;
         },
         closeLoginModal() {
             this.loginModalOpen = false;
             this.returnUrl = null;
+            this.loginModalMode = 'email';
         },
         finishModalLogin() {
             const target = this.returnUrl;

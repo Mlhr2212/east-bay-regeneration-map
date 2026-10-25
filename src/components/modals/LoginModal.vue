@@ -1,19 +1,24 @@
 <script setup>
 import { ref, computed, nextTick, watch, onMounted, onBeforeUnmount } from 'vue';
-import { useAuthStore } from '@/stores';
+import { useAuthStore, useAlertStore } from '@/stores';
+import { router } from '@/helpers';
 
 const RESEND_SECONDS = 60;
 const GENERIC_SEND_ERROR = "Couldn't send a code. Try again or use email & password.";
 const INVALID_CODE_ERROR = 'That code is invalid or expired.';
 
 const auth = useAuthStore();
+const alertStore = useAlertStore();
 
-const step = ref('email'); // email is the reliable default (SMS needs Twilio + a registered number) // 'phone' | 'code' | 'email'
+const step = ref(auth.loginModalMode === 'signup' ? 'signup' : 'email'); // 'phone' | 'code' | 'email' | 'signup'
 const phoneDisplay = ref('');
 const digits = ref(['', '', '', '', '', '']);
 const digitRefs = [];
 const email = ref('');
 const password = ref('');
+const signupName = ref('');
+const signupEmail = ref('');
+const signupPassword = ref('');
 const error = ref('');
 const info = ref('');
 const isSubmitting = ref(false);
@@ -21,6 +26,7 @@ const resendRemaining = ref(0);
 
 const phoneInput = ref(null);
 const emailInput = ref(null);
+const signupNameInput = ref(null);
 
 const codeDigits = computed(() => digits.value.join(''));
 const isCodeComplete = computed(() => /^\d{6}$/.test(codeDigits.value));
@@ -66,6 +72,8 @@ const focusStep = async () => {
         phoneInput.value?.focus();
     } else if (step.value === 'code') {
         digitRefs[0]?.focus();
+    } else if (step.value === 'signup') {
+        signupNameInput.value?.focus();
     } else {
         emailInput.value?.focus();
     }
@@ -181,8 +189,50 @@ const usePhone = () => {
     info.value = '';
 };
 
+const goSignup = () => {
+    step.value = 'signup';
+    error.value = '';
+    info.value = '';
+};
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const submitSignup = async () => {
+    if (!auth.backendAvailable || isSubmitting.value) return;
+    const name = signupName.value.trim();
+    const mail = signupEmail.value.trim();
+    if (!name) {
+        error.value = 'Please enter your name.';
+        return;
+    }
+    if (!EMAIL_RE.test(mail)) {
+        error.value = 'Please enter a valid email address.';
+        return;
+    }
+    if (signupPassword.value.length < 8) {
+        error.value = 'Password must be at least 8 characters.';
+        return;
+    }
+    isSubmitting.value = true;
+    error.value = '';
+    try {
+        await auth.register({ name, email: mail, password: signupPassword.value });
+        const target = auth.returnUrl;
+        auth.closeLoginModal();
+        alertStore.success(`Welcome, ${name}! Here are upcoming workdays and gatherings.`);
+        router.push(target || '/events');
+    } catch (err) {
+        const msg = (err && err.message) || (typeof err === 'string' ? err : '');
+        error.value = /already taken/i.test(msg)
+            ? 'An account with that email already exists. Log in instead.'
+            : (msg || "Couldn't create your account. Please try again.");
+    } finally {
+        isSubmitting.value = false;
+    }
+};
+
 const submitEmail = async () => {
-    if (!email.value || !password.value) return;
+    if (!auth.backendAvailable || !email.value || !password.value) return;
     isSubmitting.value = true;
     error.value = '';
     try {
@@ -237,7 +287,7 @@ onBeforeUnmount(() => {
                     </button>
 
                     <h2 id="login-modal-title" class="login-modal-title">
-                                            {{ step === 'code' ? 'Enter your code' : step === 'email' ? 'Sign in with email' : 'Sign in with your phone' }}
+                                            {{ step === 'code' ? 'Enter your code' : step === 'signup' ? 'Create your account' : step === 'email' ? 'Sign in with email' : 'Sign in with your phone' }}
                                         </h2>
 
                                         <form v-if="step === 'phone'" @submit.prevent="submitPhone">
@@ -305,23 +355,75 @@ onBeforeUnmount(() => {
                                             </form>
                                         </div>
 
-                    <form v-else @submit.prevent="submitEmail">
+                    <form v-else-if="step === 'signup'" @submit.prevent="submitSignup">
+                        <p class="login-modal-subtitle login-modal-subtitle--lead">
+                            Join to RSVP to work parties and get updates. Takes 30 seconds.
+                        </p>
+                        <p v-if="!auth.backendAvailable" class="login-modal-info">
+                            This public preview runs on sample data, so accounts aren't available here. You can still browse the map and events.
+                        </p>
+                        <label for="signup-name" class="login-modal-label">Name</label>
                         <input
+                            id="signup-name"
+                            ref="signupNameInput"
+                            type="text"
+                            autocomplete="name"
+                            required
+                            v-model="signupName"
+                            class="login-modal-input"
+                        />
+                        <label for="signup-email" class="login-modal-label">Email</label>
+                        <input
+                            id="signup-email"
+                            type="email"
+                            autocomplete="email"
+                            required
+                            v-model="signupEmail"
+                            class="login-modal-input"
+                        />
+                        <label for="signup-password" class="login-modal-label">Password</label>
+                        <input
+                            id="signup-password"
+                            type="password"
+                            autocomplete="new-password"
+                            required
+                            aria-describedby="signup-password-hint"
+                            v-model="signupPassword"
+                            class="login-modal-input"
+                        />
+                        <p id="signup-password-hint" class="login-modal-info">At least 8 characters</p>
+                        <p v-if="error" class="login-modal-error" role="alert">{{ error }}</p>
+                        <button type="submit" class="login-modal-btn" :disabled="isSubmitting || !auth.backendAvailable">
+                            {{ isSubmitting ? 'Creating account…' : 'Create account' }}
+                        </button>
+                        <p class="login-modal-switch">Already have an account? <button type="button" class="login-modal-link" @click="useEmail">Log in</button></p>
+                    </form>
+
+                    <form v-else @submit.prevent="submitEmail">
+                        <p v-if="!auth.backendAvailable" class="login-modal-info">
+                            This public preview runs on sample data, so accounts aren't available here. You can still browse the map and events.
+                        </p>
+                        <label for="modal-login-email" class="login-modal-label">Email</label>
+                        <input
+                            id="modal-login-email"
                             ref="emailInput"
                             type="email"
                             autocomplete="username"
                             v-model="email"
                             class="login-modal-input"
                         />
+                        <label for="modal-login-password" class="login-modal-label">Password</label>
                         <input
+                            id="modal-login-password"
                             type="password"
                             autocomplete="current-password"
                             v-model="password"
                             class="login-modal-input"
                         />
                         <p v-if="error" class="login-modal-error">{{ error }}</p>
-                        <button type="submit" class="login-modal-btn" :disabled="isSubmitting">Log in</button>
-                        <button type="button" class="login-modal-link" @click="usePhone">Use a text code instead</button>
+                        <button type="submit" class="login-modal-btn" :disabled="isSubmitting || !auth.backendAvailable">Log in</button>
+                        <button v-if="auth.backendAvailable" type="button" class="login-modal-link" @click="usePhone">Use a text code instead</button>
+                        <p class="login-modal-switch">New here? <button type="button" class="login-modal-link login-modal-link--strong" @click="goSignup">Create an account</button></p>
                     </form>
                 </div>
             </div>
@@ -418,11 +520,11 @@ onBeforeUnmount(() => {
     transition: all 0.2s;
     border: none;
     cursor: pointer;
-    background-color: #16a34a;
+    background-color: #376451; /* green-600 #16a34a failed AA (3.3:1) */
     margin-bottom: 0.5rem;
 }
 .login-modal-btn:hover:not(:disabled) {
-    background-color: #15803d;
+    background-color: #2f5233;
 }
 .login-modal-btn:disabled {
     opacity: 0.5;
@@ -430,7 +532,7 @@ onBeforeUnmount(() => {
 }
 
 .login-modal-link {
-    color: #16a34a;
+    color: #376451; /* green-600 #16a34a failed AA (3.3:1) */
     text-decoration: underline;
     font-size: 0.875rem;
     background: none;
@@ -447,6 +549,16 @@ onBeforeUnmount(() => {
     margin-top: 0.5rem;
     font-size: 0.875rem;
     color: #dc2626;
+}
+
+.login-modal-switch {
+    margin: 0.4rem 0 0;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.login-modal-link--strong {
+    font-weight: 700;
 }
 
 .login-modal-subtitle--lead {
@@ -557,9 +669,10 @@ html.dark .login-modal-input:focus { box-shadow: 0 0 0 2px #8aa37c !important; }
 html.dark .login-modal-input:-webkit-autofill,
 html.dark .login-modal-input:-webkit-autofill:hover,
 html.dark .login-modal-input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 1000px #344a34 inset !important; -webkit-text-fill-color: #f5f5f5 !important; caret-color: #f5f5f5; }
-html.dark .login-modal-btn { background-color: #8aa37c !important; }
-html.dark .login-modal-btn:hover:not(:disabled) { background-color: #6b8560 !important; }
+html.dark .login-modal-btn { background-color: #8aa37c !important; color: #14281a !important; }
+html.dark .login-modal-btn:hover:not(:disabled) { background-color: #a8bfa0 !important; color: #14281a !important; }
 html.dark .login-modal-link { color: #8aa37c !important; }
+html.dark .login-modal-switch { color: #d0d0d0 !important; }
 html.dark .login-modal-error { color: #f87171 !important; }
 html.dark .login-modal-close:hover { color: #f5f5f5 !important; }
 </style>

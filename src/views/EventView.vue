@@ -230,9 +230,13 @@ const mapsUrl = computed(() => {
 
 /* ---------- RSVP ---------- */
 
+// 'fallback' = the event came from the bundled samples (no backend) — the
+// in-app RSVP would just fail, so only the Partiful link stays live.
+const isFallback = computed(() => eventStore.eventSource === 'fallback');
+
 // The RSVP endpoint signs people up for the garden's SMS list, so it needs a
 // garden. Events without one can still link out to Partiful.
-const canRsvpHere = computed(() => hasGarden.value && !isEventPast.value && !isEventCanceled.value);
+const canRsvpHere = computed(() => hasGarden.value && !isFallback.value && !isEventPast.value && !isEventCanceled.value);
 const partifulOpen = computed(() => !!event.value?.partiful_link && !isEventPast.value && !isEventCanceled.value);
 const showRsvp = computed(() => partifulOpen.value || canRsvpHere.value);
 
@@ -265,7 +269,10 @@ const rsvpEvent = async () => {
 
     <div class="ev-content">
       <div v-if="event?.loading" class="gp-hero gp-hero--loading animate-pulse" aria-hidden="true"></div>
-      <p v-else-if="event?.error" class="ev-error">Couldn't load this event — try refreshing.</p>
+      <div v-else-if="event?.error" class="ev-error">
+        <p>We couldn't load this event.</p>
+        <router-link to="/events" class="gp-link">Back to events</router-link>
+      </div>
 
       <template v-else-if="event?.id">
         <!-- Manager strip -->
@@ -459,6 +466,7 @@ const rsvpEvent = async () => {
               </template>
               <p v-else-if="isEventPast" class="ev-fine">RSVP is closed for this one.<template v-if="upcoming.length"> The next one is below.</template></p>
               <p v-else-if="isEventCanceled" class="ev-fine">Nothing to RSVP to.<template v-if="upcoming.length"> See the next one below.</template></p>
+              <p v-if="isFallback" class="ev-fine">Sample event — RSVP works on the live site.</p>
             </div>
 
             <div v-if="gettingThere.length || mapsUrl || gardenPoint || (!hasGarden && locationText)" class="gp-card">

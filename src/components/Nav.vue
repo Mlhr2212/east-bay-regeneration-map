@@ -105,6 +105,13 @@ const openPhoneLogin = () => {
     authStore.openLoginModal();
 };
 
+const openSignup = () => {
+    if (isMobileMenuOpen.value) {
+        toggleMobileMenu();
+    }
+    authStore.openLoginModal(null, 'signup');
+};
+
 const handleClickOutside = (event) => {
     const profileMenu = event.target.closest('.profile-menu');
     const profileButton = event.target.closest('.profile-menu-button');
@@ -232,6 +239,12 @@ const handleEscape = (e) => {
                                     v-show="!authStore.user"
                                     @click="openPhoneLogin"
                                 >Login</button>
+                <button
+                                    type="button"
+                                    class="nav-item nav-link signup-btn--mobile"
+                                    v-show="!authStore.user"
+                                    @click="openSignup"
+                                >Sign up</button>
 
                 <div class="mobile-theme-options">
                     <span class="mobile-theme-inline-label">Theme</span>
@@ -311,6 +324,12 @@ const handleEscape = (e) => {
             </div>
 
             <div class="nav-right-section">
+                            <button
+                                type="button"
+                                v-show="!authStore.user"
+                                class="nav-item nav-link signup-btn"
+                                @click="openSignup"
+                            >Sign up</button>
                             <button
                                 type="button"
                                 v-show="!authStore.user"
@@ -435,6 +454,37 @@ button.login-btn {
     line-height: inherit;
 }
 
+/* Sign up: outline variant of the Login pill — dark green on the cream bar
+   (8:1 contrast). 2px border is compensated in the padding so it matches the
+   Login button's outer height. */
+.gs-navbar.navbar.bg-custom-light .nav-right-section .nav-item.nav-link.signup-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(0.45rem - 2px) calc(1.35rem - 2px);
+    border: 2px solid #064e3b;
+    border-radius: 9999px;
+    background-color: transparent;
+    color: #064e3b !important;
+    -webkit-text-fill-color: #064e3b !important;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none !important;
+    transition: background-color 0.15s ease;
+}
+.gs-navbar.navbar.bg-custom-light .nav-right-section .nav-item.nav-link.signup-btn:hover {
+    background-color: rgba(6, 78, 59, 0.08);
+    color: #064e3b !important;
+    -webkit-text-fill-color: #064e3b !important;
+    text-decoration: none !important;
+}
+button.signup-btn {
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
 /* ── About dropdown ──────────────────────────────────── */
 .nav-about-dropdown {
     position: relative;
@@ -533,6 +583,24 @@ button.login-btn {
 }
 .mobile-menu .login-btn--mobile:hover {
     background-color: #065f46;
+    color: #fff !important;
+}
+/* Same outline variant, adapted to the dark drawer: the dark-green text used
+   on the cream bar would be unreadable on #6c8a6a, so it flips to cream. */
+.mobile-menu .signup-btn--mobile {
+    align-self: flex-start;
+    margin: 0 10px 10px;
+    margin-right: 0 !important;
+    padding: calc(0.45rem - 2px) calc(1.35rem - 2px);
+    border: 2px solid #f7f1e3;
+    border-radius: 9999px;
+    background-color: transparent;
+    color: #fff !important;
+    font-weight: 700;
+    text-decoration: none !important;
+}
+.mobile-menu .signup-btn--mobile:hover {
+    background-color: rgba(255, 255, 255, 0.12);
     color: #fff !important;
 }
 .mobile-menu .nav-item.nav-link.mobile-nav-section-active {

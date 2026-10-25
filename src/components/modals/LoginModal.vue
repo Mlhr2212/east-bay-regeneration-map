@@ -8,7 +8,7 @@ const INVALID_CODE_ERROR = 'That code is invalid or expired.';
 
 const auth = useAuthStore();
 
-const step = ref('phone'); // 'phone' | 'code' | 'email'
+const step = ref('email'); // email is the reliable default (SMS needs Twilio + a registered number) // 'phone' | 'code' | 'email'
 const phoneDisplay = ref('');
 const digits = ref(['', '', '', '', '', '']);
 const digitRefs = [];

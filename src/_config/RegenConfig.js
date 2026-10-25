@@ -95,6 +95,56 @@ export function containsPrivateData(text) {
   return PHONE_RE.test(s) || STREET_RE.test(s);
 }
 
+// --- Volunteer learning & retention (Phase 2B) ---------------------------
+// Everything here that looks like instruction is a DRAFT pending Guild/expert
+// review — never presented as approved procedure. The Guild's real workday SOP
+// and V2 briefs were not provided; see docs/workday-sop-notes.md.
+export const TRAINING_REVIEW_DEFAULT = 'draft'; // 'guild-reviewed' only if the Guild actually reviewed it
+export const REVIEW_LABELS = {
+  'guild-reviewed': { label: 'Guild-reviewed', fg: '#15603A', bg: '#E4F0E8' },
+  draft: { label: 'Draft — needs expert review', fg: '#8A5A12', bg: '#FBF0DC' },
+};
+
+// Generic, safe "what to bring / expect" items. NOT project-specific, NOT SOP.
+export const WORKDAY_TEMPLATE = {
+  review: 'draft',
+  items: [
+    'A water bottle',
+    'Sun protection (hat, sunscreen)',
+    'Closed-toe shoes',
+    'Gloves, if you have them',
+    'Arrive about 15 minutes early to sign in',
+  ],
+};
+
+// Self-reported volunteer skills — private to the volunteer and organiser, never
+// public, never auto-assessed.
+export const VOLUNTEER_SKILLS = [
+  { key: 'planting', label: 'Planting & transplanting' },
+  { key: 'watering', label: 'Watering & irrigation' },
+  { key: 'tools', label: 'Tool use & basic repair' },
+  { key: 'food', label: 'Food handling & distribution' },
+  { key: 'welcoming', label: 'Welcoming newcomers' },
+];
+export const SKILL_LEVELS = [
+  { key: 'learning', label: 'Learning' },
+  { key: 'confident', label: 'Confident' },
+  { key: 'teach', label: 'Can teach others' },
+];
+
+// Communication preferences (Phase 2B consent). Defaults are the quietest:
+// email only, event updates only. No preference = no contact beyond a specific
+// RSVP/confirmation.
+export const CONTACT_CHANNELS = [
+  { key: 'email', label: 'Email only' },
+  { key: 'sms', label: 'SMS only' },
+  { key: 'both', label: 'Both' },
+];
+export const CONTACT_FREQUENCY = [
+  { key: 'events', label: 'Event updates only' },
+  { key: 'monthly', label: 'Monthly digest' },
+];
+
 /** Days since an ISO date (used for the stale / 90-day view). */
 export function daysSince(isoDate) {
   if (!isoDate) return Infinity;

@@ -37,3 +37,4 @@ export { default as ModerateView } from './ModerateView.vue';
 export { default as StewardManageView } from './StewardManageView.vue';
 export { default as ReplicateView } from './ReplicateView.vue';
 export { default as NewsletterView } from './NewsletterView.vue';
+export { default as VolunteerView } from './VolunteerView.vue';

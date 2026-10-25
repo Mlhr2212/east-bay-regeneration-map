@@ -76,6 +76,25 @@
               <p class="mt-2 font-inter text-[13px] leading-relaxed text-regen-muted">{{ scenarioDisclaimer }}</p>
             </div>
 
+            <!-- Upcoming work parties (Phase 2B) — real events only, never invented -->
+            <div class="mt-6">
+              <h2 class="font-inter text-[12px] font-semibold uppercase tracking-[0.08em] text-regen-muted">Upcoming work parties &amp; events</h2>
+              <div v-if="loadingEvents" class="mt-2 h-16 animate-pulse rounded-xl bg-regen-line/40"></div>
+              <ul v-else-if="events.length" class="mt-2 space-y-2">
+                <li v-for="e in events" :key="e.id" class="flex items-center justify-between gap-3 rounded-xl border border-regen-line bg-regen-surface p-3">
+                  <div>
+                    <p class="font-inter text-sm font-semibold text-regen-ink">{{ e.title || e.name || 'Work party' }}</p>
+                    <p class="font-inter text-xs text-regen-muted">{{ formatDate(e.date_start || e.start || e.date) }}</p>
+                  </div>
+                  <RouterLink :to="`/d/${e.id}`" class="shrink-0 rounded-xl bg-regen-moss px-3 py-1.5 font-inter text-sm font-semibold text-white hover:bg-regen-moss-dark">View &amp; RSVP</RouterLink>
+                </li>
+              </ul>
+              <p v-else class="mt-2 font-inter text-[15px] text-regen-ink-soft">
+                No work party listed yet —
+                <RouterLink :to="`/regeneration/suggest?correct=${resource.slug}`" class="font-semibold text-regen-moss hover:underline">suggest one</RouterLink>.
+              </p>
+            </div>
+
             <!-- Garden link where this is also a Garden Steward garden -->
             <RouterLink v-if="resource.gardenSlug" :to="`/gardens/${resource.gardenSlug}`" class="mt-5 inline-flex items-center gap-2 font-inter text-sm font-semibold text-regen-moss hover:underline">
               <i class="fa-solid fa-seedling" aria-hidden="true"></i> View this garden in Garden Steward
@@ -132,11 +151,11 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTitle } from '@vueuse/core';
 import { setMetaDescription, setJsonLd, clearJsonLd, listingJsonLd } from '@/helpers/seo';
-import { useResourcesStore } from '@/stores';
+import { useResourcesStore, useEventStore } from '@/stores';
 import StatusBadge from '@/components/regen/StatusBadge.vue';
 import StaticPinMap from '@/components/StaticPinMap.vue';
 import NewsletterSignup from '@/components/regen/NewsletterSignup.vue';
@@ -147,8 +166,33 @@ import {
 
 const route = useRoute();
 const store = useResourcesStore();
+const eventStore = useEventStore();
 
 const resource = computed(() => store.bySlug(route.params.slug));
+const events = ref([]);
+const loadingEvents = ref(false);
+
+function formatDate(d) {
+  if (!d) return 'Date to be confirmed';
+  const dt = new Date(d);
+  return Number.isNaN(dt.getTime()) ? String(d) : dt.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+// Load real upcoming events for this project's garden (never invented).
+async function loadEvents(gardenSlug) {
+  events.value = [];
+  if (!gardenSlug) return;
+  loadingEvents.value = true;
+  try {
+    const res = await eventStore.getByGarden(gardenSlug);
+    const rows = Array.isArray(res?.days) ? res.days : Array.isArray(res) ? res : [];
+    events.value = rows.slice(0, 3);
+  } catch {
+    events.value = [];
+  } finally {
+    loadingEvents.value = false;
+  }
+}
 const typeLabel = computed(() => labelFor(resource.value?.type));
 const color = computed(() => typeColor(resource.value?.type));
 const source = computed(() => sourceMeta(resource.value?.sourceType));
@@ -173,6 +217,7 @@ watch(resource, (r) => {
     title.value = `${r.name} — East Bay Regeneration Map`;
     setMetaDescription(`${r.name} in ${r.neighbourhood || r.city || 'the East Bay'}: ${r.shortDescription || r.description || ''}`.trim());
     setJsonLd('ld-listing', listingJsonLd(r, window.location.href));
+    loadEvents(r.gardenSlug);
   } else {
     title.value = 'Listing — East Bay Regeneration Map';
   }

@@ -63,16 +63,19 @@ export const useNewsletterStore = defineStore({
     sent: (state) => state.newsletters.filter((n) => n.status === 'sent'),
   },
   actions: {
-    // Public signup — explicit opt-in only.
-    subscribe({ email, name = '' }) {
+    // Public signup — explicit opt-in only. Records communication preferences
+    // (channel + frequency); defaults are the quietest (email / event updates).
+    subscribe({ email, name = '', channel = 'email', frequency = 'events' }) {
       const clean = String(email || '').trim().toLowerCase();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) return { ok: false, error: 'Enter a valid email address.' };
       const existing = this.subscribers.find((s) => s.email === clean);
       if (existing) {
         existing.status = 'subscribed';
         existing.name = name || existing.name;
+        existing.channel = channel;
+        existing.frequency = frequency;
       } else {
-        this.subscribers.push({ id: `s${Date.now()}`, email: clean, name, consentAt: today(), status: 'subscribed' });
+        this.subscribers.push({ id: `s${Date.now()}`, email: clean, name, channel, frequency, consentAt: today(), status: 'subscribed' });
       }
       return { ok: true };
     },

@@ -14,6 +14,16 @@
         </button>
       </div>
       <p v-if="error" class="mt-1.5 font-inter text-[13px] font-semibold text-regen-danger">{{ error }}</p>
+      <!-- Communication preferences (consent) -->
+      <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-inter text-[13px] text-regen-ink-soft">
+        <span class="text-regen-muted">Send me:</span>
+        <select v-model="channel" class="rounded-lg border border-regen-line bg-regen-paper px-2 py-1 text-[13px] outline-none focus:border-regen-moss">
+          <option v-for="c in channels" :key="c.key" :value="c.key">{{ c.label }}</option>
+        </select>
+        <select v-model="frequency" class="rounded-lg border border-regen-line bg-regen-paper px-2 py-1 text-[13px] outline-none focus:border-regen-moss">
+          <option v-for="f in frequencies" :key="f.key" :value="f.key">{{ f.label }}</option>
+        </select>
+      </div>
       <label class="mt-2 flex cursor-pointer items-start gap-2 font-inter text-[13px] text-regen-ink-soft">
         <input v-model="consent" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-regen-line text-regen-moss focus:ring-regen-moss" />
         Yes, send me Guild updates. My email stays private and is never shown publicly.
@@ -25,13 +35,18 @@
 <script setup>
 import { ref } from 'vue';
 import { useNewsletterStore, useAlertStore } from '@/stores';
+import { CONTACT_CHANNELS, CONTACT_FREQUENCY } from '@/_config/RegenConfig';
 
 defineProps({ heading: { type: String, default: 'Get Guild updates' } });
 
 const newsletter = useNewsletterStore();
 const alert = useAlertStore();
+const channels = CONTACT_CHANNELS;
+const frequencies = CONTACT_FREQUENCY;
 const name = ref('');
 const email = ref('');
+const channel = ref('email');
+const frequency = ref('events');
 const consent = ref(false);
 const error = ref('');
 const done = ref(false);
@@ -39,7 +54,7 @@ const done = ref(false);
 function onSubmit() {
   error.value = '';
   if (!consent.value) { error.value = 'Please tick the box to confirm you want updates.'; return; }
-  const res = newsletter.subscribe({ email: email.value, name: name.value });
+  const res = newsletter.subscribe({ email: email.value, name: name.value, channel: channel.value, frequency: frequency.value });
   if (!res.ok) { error.value = res.error; return; }
   done.value = true;
   alert.success('Subscribed — welcome to the list.');
